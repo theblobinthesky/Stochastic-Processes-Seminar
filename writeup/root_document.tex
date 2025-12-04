@@ -1,0 +1,93 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[english]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\usepackage{dsfont}
+\usepackage{mathtools}
+\usepackage{amsthm}
+
+\title{Your Paper}
+\author{You}
+
+\newcommand{\defeq}{\vcentcolon=}
+\newcommand{\eqdef}{=\vcentcolon}
+\newtheorem{theorem}{Theorem}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Your abstract.
+\end{abstract}
+
+\section{Introduction}
+
+Your introduction goes here! Simply start writing your document and use the Recompile button to view the updated PDF preview. Examples of commonly used commands and features are listed below, to help you get started.
+
+Once you're familiar with the editor, you can find various project settings in the Overleaf menu, accessed via the button in the very top left of the editor. To view tutorials, user guides, and further documentation, please visit our \href{https://www.overleaf.com/learn}{help library}, or head to our plans page to \href{https://www.overleaf.com/user/subscription/plans}{choose your plan}.
+
+\section{Some examples to get started}
+
+Let $(\mathcal{X}, \mathcal{A}, \mathds{P_\mathcal{A}})$ be a probability space. 
+Let $X: \mathcal{X} \rightarrow \mathbb{R}$ be a discrete random variable on the space with probability density function $f_X: \mathcal{X} \rightarrow \mathbb{R}_+$. We use the shorthand notation $p(x) = \mathds{P_\mathcal{A}}[X = x]$. Let $(\mathcal{Y}, \mathcal{B}, \mathds{P_\mathcal{B}})$ be a probability space. 
+Let $Y: \mathcal{Y} \rightarrow \mathbb{R}$ be a discrete random variable on the space with probability density function $f_Y: \mathcal{Y} \rightarrow \mathbb{R}_+$. We use the shorthand notation $p(y) = \mathds{P_\mathcal{B}}[X = x]$.
+
+Convention: $0\log(0) = 0$.
+
+Definition of Entropy: $H_q(X) = \sum_{x \in \mathcal{X}}{-p(x)\log_q(p(x))}$.
+
+TODO: Maybe mention axiomatic definition.
+
+Typical base $q = 2$: $H(X) \defeq H_2(X)$ and $\log(p) = \log_2(p)$.
+
+Existence of Entropy: If $\mathcal{X}$ is finite, $H_q(X)$ exists.
+
+Example, when Entropy does not exist:
+Let $X = $,
+
+Using definition of expected value: $H_p(X) = \mathbb{E}(-\log_q(p(X)) = \mathbb{E}(\frac{1}{\log_q(p(X))})$.
+
+Properties of Entropy:
+\begin{theorem}
+    $H(X) \ge 0$.
+\end{theorem}
+\begin{proof}
+    Note that $\log(\frac{1}{[0, 1]}) = \log([1, \infty]) = [0, \infty]$ 
+    and $p(X)(\mathcal{X}) \ge 0$. \\
+    Using the monotonicity of the expected value, we obtain
+    \begin{equation*}
+        0 \le \mathbb{E}\left(\log\left(\frac{1}{p(X)}\right)\right)
+        = \mathbb{E}\left(-\log\left(p(X)\right)\right) = H(X)
+    \end{equation*}
+\end{proof}
+
+\begin{theorem}
+\text{The entropy function} H(X) \text{is concave.}
+\end{theorem}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.50\linewidth]{../plots/entropy_function.png}
+    \caption{\label{fig:entropy_function}The entropy function is a concave function.}
+\end{figure}
+
+\begin{proof}
+    
+\end{proof}
+
+\bibliographystyle{alpha}
+\bibliography{sample}
+
+\end{document}
