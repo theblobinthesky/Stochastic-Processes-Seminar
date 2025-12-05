@@ -13,17 +13,23 @@
 \usepackage{amsfonts}
 \usepackage{graphicx}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
-
-\usepackage{dsfont}
-\usepackage{mathtools}
-\usepackage{amsthm}
+\usepackage{dsfont, mathtools, amsthm}
 
 \title{Your Paper}
 \author{You}
 
 \newcommand{\defeq}{\vcentcolon=}
 \newcommand{\eqdef}{=\vcentcolon}
+\newcommand{\paren}[1]{\left(#1\right)}
+
+\theoremstyle{plain}
 \newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{remark}{Remark}
 
 \begin{document}
 \maketitle
@@ -32,32 +38,31 @@
 Your abstract.
 \end{abstract}
 
-\section{Introduction}
-
-Your introduction goes here! Simply start writing your document and use the Recompile button to view the updated PDF preview. Examples of commonly used commands and features are listed below, to help you get started.
-
-Once you're familiar with the editor, you can find various project settings in the Overleaf menu, accessed via the button in the very top left of the editor. To view tutorials, user guides, and further documentation, please visit our \href{https://www.overleaf.com/learn}{help library}, or head to our plans page to \href{https://www.overleaf.com/user/subscription/plans}{choose your plan}.
-
-\section{Some examples to get started}
+\section{Entropy and Mutual information}
 
 Let $(\mathcal{X}, \mathcal{A}, \mathds{P_\mathcal{A}})$ be a probability space. 
 Let $X: \mathcal{X} \rightarrow \mathbb{R}$ be a discrete random variable on the space with probability density function $f_X: \mathcal{X} \rightarrow \mathbb{R}_+$. We use the shorthand notation $p(x) = \mathds{P_\mathcal{A}}[X = x]$. Let $(\mathcal{Y}, \mathcal{B}, \mathds{P_\mathcal{B}})$ be a probability space. 
 Let $Y: \mathcal{Y} \rightarrow \mathbb{R}$ be a discrete random variable on the space with probability density function $f_Y: \mathcal{Y} \rightarrow \mathbb{R}_+$. We use the shorthand notation $p(y) = \mathds{P_\mathcal{B}}[X = x]$.
 
-Convention: $0\log(0) = 0$.
+\begin{definition}
+    Let $X$ be a discrete random variable with distribution $p(x)$. \\
+    We define entropy as $H_q(X) = \mathbb{E}\paren{-\log_q p(X)}$.
+    Since entropy was originally defined in the context of compression by Shannon in TODO,
+    we usually use $q = 2$ and $H(X) = \mathbb{E}\paren{-\log_2 p(X)}$.
+\end{definition}
 
-Definition of Entropy: $H_q(X) = \sum_{x \in \mathcal{X}}{-p(x)\log_q(p(x))}$.
-
-TODO: Maybe mention axiomatic definition.
-
-Typical base $q = 2$: $H(X) \defeq H_2(X)$ and $\log(p) = \log_2(p)$.
-
+\begin{theorem}
 Existence of Entropy: If $\mathcal{X}$ is finite, $H_q(X)$ exists.
 
 Example, when Entropy does not exist:
 Let $X = $,
+\end{theorem}
+\begin{proof}
+\end{proof}
 
-Using definition of expected value: $H_p(X) = \mathbb{E}(-\log_q(p(X)) = \mathbb{E}(\frac{1}{\log_q(p(X))})$.
+Convention: $0\log(0) = 0$.
+
+Using definition of expected value: $H_p(X) = \mathbb{E}\paren{-\log_q(p(X)) = \mathbb{E}\paren{\frac{1}{\log_q(p(X))}}}$.
 
 Properties of Entropy:
 \begin{theorem}
@@ -65,27 +70,134 @@ Properties of Entropy:
 \end{theorem}
 \begin{proof}
     Note that $\log(\frac{1}{[0, 1]}) = \log([1, \infty]) = [0, \infty]$ 
-    and $p(X)(\mathcal{X}) \ge 0$. \\
+    and $p(X)(\mathcal{X}) \in [0, 1]$. \\
     Using the monotonicity of the expected value, we obtain
     \begin{equation*}
-        0 \le \mathbb{E}\left(\log\left(\frac{1}{p(X)}\right)\right)
-        = \mathbb{E}\left(-\log\left(p(X)\right)\right) = H(X)
+        0 \le \mathbb{E}\paren{\log \paren{\frac{1}{p(X)}}}
+        = -\mathbb{E}\paren{\log \paren{p(X)}} = H(X)
     \end{equation*}
 \end{proof}
+
+\begin{definition}\label{def:entropy-mutual-info-def}
+    Let $X, Y$ be discrete random variables with marginal distributions $p(x), p(y)$ and with joint distribution $p(x, y)$.
+    We define the following:
+    \begin{align*}
+        \text{Conditional Entropy:} & \quad H(X \mid Y) = -\mathbb{E}\paren{\log p(X \mid Y)} \\
+        \text{Joint Entropy:}       & \quad H(X, Y) = -\mathbb{E}\paren{\log p(X, Y)} \\
+        \text{Relative Entropy:}    & \quad D(p(x) \| q(x)) = \mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}} \text{with the conventions} ... \\
+        \text{Mutual information:}  & \quad I(X; Y) \defeq D(p(x, y) \| p(x)p(y))
+    \end{align*}
+\end{definition}
+
+\begin{remark}
+    From now on, we will always define these two discrete random variables $X, Y$ from Definition~\ref{def:entropy-mutual-info-def}.
+\end{remark}
+
+\newpage
+\begin{remark}
+    Under the assumptions of Definition~\ref{def:entropy-mutual-info-def}, we have
+    \begin{align*}
+        D(p(x) \| q(x)) &= \mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}}                   && \text{(def.~of relative entropy)} \\
+                        &= \sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}}        && \text{(def.~of expected value)}
+    \end{align*}
+    To understand the conventions, we can look at the limit cases:
+    \begin{enumerate}
+        \item \textbf{Case $p \in (0, 1], q = 0$:} $\lim_{q \to 0^+} p \log \frac{p}{q} = \lim_{q \to 0^+} (p \log p - p \log q) = \infty$.
+        \item \textbf{Case $p = 0, q \in (0, 1]$:} $0 \log \frac{0}{q} = 0$.
+        \item \textbf{Case $p = q = 0$:} Case 1 logic yields $\lim_{q \to 0^+} p \log \frac{p}{q} = \infty$ and Case 2 logic yields $0 \log \frac{0}{0} = 0$. 
+    \end{enumerate}
+    As we want $\sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}}$ to sum over $x \in \mathcal{X}, p(x) > 0$, we choose the convention $0 \log \frac{0}{0} = 0$.
+    We can visualize the the pointwise relative entropy function $(p, q) \mapsto \log \frac{p}{q}$:
+    \begin{center}
+        \includegraphics[width=0.6\linewidth]{../plots/pointwise_rel_entropy_continuation.pdf}
+    \end{center}
+    We can calculate the relative entropies for an example. The more alike the distributions are, the closer to zero the relative entropy is.
+    Let $X \sim B(20, \alpha)$ and $Y \sim B(20, \beta)$ with $\paren{\alpha, \beta} \in [0, 1]^2$.
+    \begin{center}
+        \includegraphics[width=1.0\linewidth]{../plots/relative_entropy_binomial_distributions.pdf}
+    \end{center}
+    \begin{align*}
+        D(p(x) \| q(x)) &= \sum_{x = 0}^{20}{p(x) \log \frac{p(x)}{q(x)}}                                                             \\
+        D(p(x) \| q(x)) &= 0 \log \frac{0}{1} + 1 \log \frac{1}{0} = 0 + \infty = \infty                && (\alpha=0, \beta=1)        \\
+        D(p(x) \| q(x)) &\approx 35.2                                                                   && (\alpha=0.1, \beta=0.9)    \\
+        D(p(x) \| q(x)) &\approx 6.8                                                                    && (\alpha=0.3, \beta=0.7)    \\
+        D(p(x) \| q(x)) &= \sum_{x = 0}^{20}{p(x) \log 1} = 0                                           && (\alpha= 0.5, \beta= 0.5)
+    \end{align*}
+\end{remark}
+
+\newpage
+How do these concepts relate?
+
+TODO: Add a venn diagram visualisation.
+
+\newpage
+\begin{remark}
+    The relationship between entropy, conditional entropy and mutual information can be visualized:
+    \begin{center}
+        \includegraphics[width=1.0\linewidth]{../plots/entropy_mutual_info_venn_diagram.pdf}
+    \end{center}
+\end{remark}
+
+\begin{theorem}
+    We can formalise the visual insight from before:
+    \begin{enumerate}
+        \item $I(X; Y) = H(Y) - H(Y | X)$
+        \item $I(X; Y) = I(Y; X)$
+        \item $I(Y; X) = H(X) - H(X | Y)$
+        \item $I(X; Y) = H(X, Y)$
+        \item $I(X; X) = H(X)$
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    \begin{enumerate}
+        \item We can use the definition of mutual information and relative entropy to obtain:
+            \begin{align*}
+                I(X; Y) &= D(p(x, y) \| p(x)p(y))                                                           && \text{(by def.~of mutual info.)}\\
+                        &= \mathbb{E}_{p(x, y)}\paren{\log \frac{p(x, y)}{p(x)p(y)}}                        && \text{(by def.~relative entropy)} \\
+                        &= \mathbb{E}_{p(x, y)}\paren{\log \frac{p(x)p(y|x)}{p(x)p(y)}}                     && \text{(using cond.~probability)} \\
+                        &= \mathbb{E}_{p(x, y)}\paren{\log \frac{p(y|x)}{p(y)}}                             && \text{(simplify fraction)} \\
+                        &= \mathbb{E}_{p(x, y)}\paren{\log p(y|x)} - \mathbb{E}_p(x, y)\paren{\log p(y)}    && \text{(simplify logarithm)} \\
+                        &= H(Y | X) - H(Y)                                                                  && \text{(by def.~of entropy)}
+            \end{align*}
+        \item The definition of mutual information yields:
+            \begin{align*}
+                I(X; Y) &= D(p(x, y) \| p(x)p(y))       && \text{(by def.~of mutual info.)} \\
+                        &= D(p(y, x) \| p(y)p(x))       && \text{(TODO: Idk)}\\
+                        &= I(X; Y)
+            \end{align*}
+        \item Follows directly from 2 and 3.
+        \item \begin{align*}
+                I(X; Y) &= H(Y) - H(X | Y)                  && \text{(by 1)} \\
+                        &= H(Y) - \paren{H(X, Y) - H(X)}    && \text{(chain rule)} \\
+                        &= H(X) + H(Y) - H(X, Y)
+            \end{align*}
+        \item Using 1 we get $I(X; X) = H(X) - H(X | X) = H(X)$.
+    \end{enumerate}
+\end{proof}
+
 
 \begin{theorem}
 \text{The entropy function} H(X) \text{is concave.}
 \end{theorem}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.50\linewidth]{../plots/entropy_function.png}
-    \caption{\label{fig:entropy_function}The entropy function is a concave function.}
-\end{figure}
+% \begin{figure}
+%     \centering
+%     \includegraphics[width=0.50\linewidth]{../plots/entropy_function.png}
+%     \caption{\label{fig:entropy_function}The entropy function is a concave function.}
+% \end{figure}
 
 \begin{proof}
     
 \end{proof}
+
+
+% TODO: Relative entropy is often used as a distance, but not actually a metric.
+
+
+\section{Advanced properties and Inequalities}
+
+\section{Axiomatic Definition}
+
 
 \bibliographystyle{alpha}
 \bibliography{sample}

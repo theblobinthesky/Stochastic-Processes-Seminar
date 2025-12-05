@@ -15,7 +15,7 @@ def main():
     ax.set_ylabel(r'$-p\log(p)$')
     ax.grid(True, alpha=0.3)
 
-    fig.savefig("plots/entropy_function.png")
+    fig.savefig("../plots/entropy_function.pdf")
 
 if __name__ == "__main__":
     main()
