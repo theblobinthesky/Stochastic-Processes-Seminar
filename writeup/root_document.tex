@@ -44,6 +44,8 @@ Let $(\mathcal{X}, \mathcal{A}, \mathds{P_\mathcal{A}})$ be a probability space.
 Let $X: \mathcal{X} \rightarrow \mathbb{R}$ be a discrete random variable on the space with probability density function $f_X: \mathcal{X} \rightarrow \mathbb{R}_+$. We use the shorthand notation $p(x) = \mathds{P_\mathcal{A}}[X = x]$. Let $(\mathcal{Y}, \mathcal{B}, \mathds{P_\mathcal{B}})$ be a probability space. 
 Let $Y: \mathcal{Y} \rightarrow \mathbb{R}$ be a discrete random variable on the space with probability density function $f_Y: \mathcal{Y} \rightarrow \mathbb{R}_+$. We use the shorthand notation $p(y) = \mathds{P_\mathcal{B}}[X = x]$.
 
+This is a test.
+
 \begin{definition}
     Let $X$ be a discrete random variable with distribution $p(x)$. \\
     We define entropy as $H_q(X) = \mathbb{E}\paren{-\log_q p(X)}$.
@@ -65,19 +67,6 @@ Convention: $0\log(0) = 0$.
 Using definition of expected value: $H_p(X) = \mathbb{E}\paren{-\log_q(p(X)) = \mathbb{E}\paren{\frac{1}{\log_q(p(X))}}}$.
 
 Properties of Entropy:
-\begin{theorem}
-    $H(X) \ge 0$.
-\end{theorem}
-\begin{proof}
-    Note that $\log(\frac{1}{[0, 1]}) = \log([1, \infty]) = [0, \infty]$ 
-    and $p(X)(\mathcal{X}) \in [0, 1]$. \\
-    Using the monotonicity of the expected value, we obtain
-    \begin{equation*}
-        0 \le \mathbb{E}\paren{\log \paren{\frac{1}{p(X)}}}
-        = -\mathbb{E}\paren{\log \paren{p(X)}} = H(X)
-    \end{equation*}
-\end{proof}
-
 \begin{definition}\label{def:entropy-mutual-info-def}
     Let $X, Y$ be discrete random variables with marginal distributions $p(x), p(y)$ and with joint distribution $p(x, y)$.
     We define the following:
@@ -130,6 +119,21 @@ How do these concepts relate?
 
 TODO: Add a venn diagram visualisation.
 
+\begin{theorem}
+    The chain rule holds:
+    \begin{align*}
+        H(X, Y) = H(X) + H(Y \mid X)
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    \begin{align*}
+        H(X, Y) &= -\mathbb{E}\paren{\log p(X, Y)}                                          && \text{(def. entropy)}        \\
+                &= -\mathbb{E}\paren{\log p(X)p(Y \mid X)}                                  && \text{(conditional prob.)}   \\
+                &= -\mathbb{E}\paren{\log p(X)} + -\mathbb{E}\paren{\log p(Y \mid X)}       && \text{(log sum property)}    \\
+                &= H(X) + H(Y \mid X)                                                       && \text{(def. entropy)}        \\
+    \end{align*}
+\end{proof}
+
 \newpage
 \begin{remark}
     The relationship between entropy, conditional entropy and mutual information can be visualized:
@@ -176,9 +180,110 @@ TODO: Add a venn diagram visualisation.
 \end{proof}
 
 
+
+% TODO: Relative entropy is often used as a distance, but not actually a metric.
+
+
+\newpage
+\section{Properties of Entropy and Mutual Information}
+
+\begin{remark}
+    We use the common definition of convex functions, concave functions from analysis.
+\end{remark}
+
+% TODO: Make sure which theorems and definitions assume discrete.
+
 \begin{theorem}
-\text{The entropy function} H(X) \text{is concave.}
+    Let $X$ be a random variable (not necessarily discrete) and $f$ a function.
+    \begin{enumerate}
+        \item If $f$ is convex, we have $\mathbb{E} f(X) \ge f(\mathbb{E} X)$.
+        \item If $f$ is concave, we have $\mathbb{E} f(X) \le f(\mathbb{E} X)$.
+    \end{enumerate}
 \end{theorem}
+\begin{proof}
+    \begin{enumerate}
+        \item
+            % Let $n \in \mathbb{N}, n \gt 2$ and $p_1, \cdots, p_n \in $ and $x_1, \cdots, x_n$.
+            We show $f\paren{\sum_{i=1}^{n}{p_i x_i}} \le \sum_{i=1}^{n}{p_i f(x_i)}$ by induction. \\
+            The definition of convexity yields the base case $i = 2$: $f(p_1 x_1 + p_2 x_2) \le p_1 f(x_1) + p_2 f(x_2)$. \\
+            We assume the claim holds for $n - 1$ and the induction case goes as follows: \\
+            \begin{align*}
+                f\paren{\sum_{i=1}^{n}{p_i x_i}} &= f\paren{p_1 x_1 + (1 - p_1) \sum_{i=2}^{n}{\frac{p_i}{1 - p_1} x_i}}                                                                        \\
+                &\le p_1 f\paren{x_1} + (1 - p_1) f\paren{\sum_{i=2}^{n}{\frac{p_i}{1 - p_1} x_i}}           && \text{(def. of convexity)}                                                      \\
+                &\le p_1 f\paren{x_1} + (1 - p_1) \sum_{i=2}^{n}{\frac{p_i}{1 - p_1} f\paren{{x_i}}}         
+                && \text{(induct. hypo. applies bc. of $\sum_{i = 2}^{n}{\frac{p_i}{1 - p_1}}$ = 1)} \\
+                &= \sum_{i=1}^{n}{p_i f\paren{{x_i}}}
+            \end{align*}
+            If $\mathcal{X}$ is finite, the claim follows.
+            If $\mathcal{X}$ is countably infinite, the claim follows using ... .
+            % TODO: Case missing?
+        \item
+            Follows from part 1 applied to $-f$.
+    \end{enumerate}
+\end{proof}
+
+\begin{corollary}
+    Entropy and Mutual Information are non-negative:
+    \begin{enumerate}
+        \item $0 \le H(X)$
+        \item $0 \le D(p(x) \| q(x))$
+        \item $0 \le I(X; Y)$
+    \end{enumerate}
+\end{corollary}
+\begin{proof}
+    \begin{enumerate}
+        \item 
+            Note that $\log(\frac{1}{[0, 1]}) = \log([1, \infty]) = [0, \infty]$ 
+            and $p(X)(\mathcal{X}) \in [0, 1]$. \\
+            Using the monotonicity of the expected value, we obtain
+            \begin{equation*}
+                0 \le \mathbb{E}\paren{\log \paren{\frac{1}{p(X)}}}
+                = -\mathbb{E}\paren{\log \paren{p(X)}} = H(X)
+            \end{equation*}
+
+        \item 
+            We can prove this using Jensens inequality on a \textit{concave} function: % TODO: Make sure we use the support correctly.
+            \begin{align*}
+                -D(p(x) \| q(x)) &= -\mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}}         && \text{(def. of relative entropy)}            \\
+                &\le -\log\paren{\mathbb{E}_p \frac{p(X)}{q(X)}}                        
+                = \log\paren{\mathbb{E}_p \frac{q(X)}{p(X)}}                            && \text{(-log is convex, property of log)}     \\
+                &= \log\paren{\sum_{x \in \mathcal{X}}{p(x) \frac{q(x)}{p(x)}}}         
+                = \log\paren{\sum_{x \in \mathcal{X}}{q(x)}}                            && \text{(def. of exp. value, simplify expr.)}  \\
+                &= \log\paren{1} = 0                                                    && \text{(q is a prob. function)}               \\
+            \end{align*}
+            So equivalently, we have $D(p(x) \| q(x)) \ge 0$.
+        \item Follows from part 1: $I(X; Y) = D(p(x, y) \| p(x)p(y)) \ge 0$.
+    \end{enumerate}
+\end{proof}
+
+\begin{corollary}
+    \begin{enumerate}
+        \item More information can only \textit{decrease} entropy: $H(X \mid Y) \le H(X)$.
+        \item The uniform distribution maximizes entropy: \\
+            $H(X) \le \log |\mathcal{X}|$ and $H(X) = \log |\mathcal{X}| \iff X \sim U(\mathcal{X})$.
+        \item $p \mapsto H(p)$ is concave.
+    \end{enumerate}
+\end{corollary}
+\begin{proof}
+    \begin{enumerate}
+        \item $0 \le I(X; Y) = H(X) - H(X \mid Y) \iff H(X \mid Y) \le H(X)$
+        \item
+            Let $Y \sim U(\mathcal{X})$ st. $\forall x \in \mathcal{X}\vcentcolon q(x)=\frac{1}{|\mathcal{X}|}$.
+            \begin{align*}
+                0 &\le D(p(x) \| q(x)) \\
+                &= \mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}} \\
+                &= \sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}} \\
+                &= \sum_{x \in \mathcal{X}}{p(x) \log\paren{p(x)|\mathcal{X}|}} \\
+                &= \sum_{x \in \mathcal{X}}{p(x) \log p(x)} + |\mathcal{X}| \sum_{x \in \mathcal{X}}{p(x)}\\
+                &= -H(X) + |\mathcal{X}| = |\mathcal{X}| - H(X)
+            \end{align*}
+            This is equivalent to $H(X) \le \log |\mathcal{X}|$.
+        \item
+            \begin{align*}
+                H(p) = -p \log p = % TODO: Idk how interesting is this...
+            \end{align*}
+    \end{enumerate}
+\end{proof}
 
 % \begin{figure}
 %     \centering
@@ -186,16 +291,9 @@ TODO: Add a venn diagram visualisation.
 %     \caption{\label{fig:entropy_function}The entropy function is a concave function.}
 % \end{figure}
 
-\begin{proof}
-    
-\end{proof}
+% TODO: Add deep learning example.
 
-
-% TODO: Relative entropy is often used as a distance, but not actually a metric.
-
-
-\section{Advanced properties and Inequalities}
-
+\newpage
 \section{Axiomatic Definition}
 
 

@@ -4,7 +4,7 @@ from matplotlib.patches import Ellipse
 def main():
     plt.rcParams['text.usetex'] = True
 
-    fig, axs = plt.subplots(1, 3, figsize = (9, 4), tight_layout=True)
+    fig, axs = plt.subplots(1, 3, figsize = (9, 3), tight_layout=True)
 
     def add_ellipse(ax, xy, width):
         ax.add_patch(Ellipse(
