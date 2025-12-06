@@ -127,35 +127,42 @@ Using definition of expected value: $H_p(X) = \mathbb{E}\paren{-\log_q(p(X)) = \
     \end{center}
 \end{remark}
 
-\begin{theorem}
+\begin{theorem}\label{theorem:chain-rules}
+    Let $n \in \mathbb{N}, n \ge 2$, $(X_1, \cdots, X_n) \sim p(x_1, \cdots, x_n)$.
     The following statements about Entropy and Mutual Information are called Chain Rules:
     \begin{enumerate}
+        \item $H(X_1, \cdots, X_n) = \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1)}$
         \item
         \item
     \end{enumerate}
 \end{theorem}
 \begin{proof}
+    \begin{enumerate}
+        \item Prove this result using induction by $n$. \\
+        Base case $n = 2$:
+        \begin{align*}
+            H(X_1, X_2) &= -\mathbb{E}\paren{\log p(X_1, X_2)} \\
+            &= -\mathbb{E}\paren{\log p(X_2 \mid X_1)p(X_1)} \\
+            &= -\mathbb{E}\paren{\log p(X_2 \mid X_1)} + -\mathbb{E}\paren{\log p(X_1)} \\
+            &= H(X_1) + H(X_2 \mid X_1)
+        \end{align*}
+        Assume the theorem holds for $n - 1$. Induction case $n - 1$ to $n$:
+        \begin{align*}
+            H(X_1, \cdots, H_n) &= H(X_n | X_1, \cdots, H_{n-1}) + H(X_1, \cdots, H_{n-1})          && \text{(apply base case)} \\
+            &= H(X_n | X_1, \cdots, H_{n-1}) + \sum_{i=1}^{n-1}{H(X_i \mid X_{i-1}, \cdots, X_1)}   && \text{(induction hypothesis)}
+        \end{align*}
+    \end{enumerate}
 \end{proof}
 
 \begin{corollary}
-\end{corollary}
-\begin{proof}
-\end{proof}
-
-\begin{corollary}
-    The following statements are specialized for two random variables $X, Y$:
+    We can specialize the Chain Rule for Entropy and Mutual Information to two variables:
     \begin{enumerate}
         \item $H(X, Y) = H(X) + H(Y \mid X)$
-        \item
+        \item $I(X; Y) = $
     \end{enumerate}
 \end{corollary}
 \begin{proof}
-    \begin{align*}
-        H(X, Y) &= -\mathbb{E}\paren{\log p(X, Y)}                                          && \text{(def. entropy)}        \\
-                &= -\mathbb{E}\paren{\log p(X)p(Y \mid X)}                                  && \text{(conditional prob.)}   \\
-                &= -\mathbb{E}\paren{\log p(X)} + -\mathbb{E}\paren{\log p(Y \mid X)}       && \text{(log sum property)}    \\
-                &= H(X) + H(Y \mid X)                                                       && \text{(def. entropy)}        \\
-    \end{align*}
+    Follows from Theorem~\ref{theorem:chain-rules}.
 \end{proof}
 
 \begin{theorem}
