@@ -13,10 +13,10 @@
 \usepackage{amsfonts}
 \usepackage{graphicx}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
-\usepackage{dsfont, mathtools, amsthm}
+\usepackage{dsfont, mathtools, amsthm, diagbox}
 
-\title{Your Paper}
-\author{You}
+\title{Introduction to Entropy}
+\author{Erik Stern}
 
 \newcommand{\defeq}{\vcentcolon=}
 \newcommand{\eqdef}{=\vcentcolon}
@@ -38,7 +38,10 @@
 Your abstract.
 \end{abstract}
 
+\tableofcontents
+
 \section{Entropy and Mutual information}
+\subsection{Definitions and Conventions}
 
 Let $(\mathcal{X}, \mathcal{A}, \mathds{P_\mathcal{A}})$ be a probability space. 
 Let $X: \mathcal{X} \rightarrow \mathbb{R}$ be a discrete random variable on the space with probability density function $f_X: \mathcal{X} \rightarrow \mathbb{R}_+$. We use the shorthand notation $p(x) = \mathds{P_\mathcal{A}}[X = x]$. Let $(\mathcal{Y}, \mathcal{B}, \mathds{P_\mathcal{B}})$ be a probability space. 
@@ -47,10 +50,12 @@ Let $Y: \mathcal{Y} \rightarrow \mathbb{R}$ be a discrete random variable on the
 This is a test.
 
 \begin{definition}
+    TODO: This is all incorrectly defined.
     Let $X$ be a discrete random variable with distribution $p(x)$. \\
     We define entropy as $H_q(X) = \mathbb{E}\paren{-\log_q p(X)}$.
     Since entropy was originally defined in the context of compression by Shannon in TODO,
-    we usually use $q = 2$ and $H(X) = \mathbb{E}\paren{-\log_2 p(X)}$.
+    We usually use $q = 2$ and $H(X) = \mathbb{E}\paren{-\log_2 p(X)}$.
+    TODO: Add $log = log_2$ convention.
 \end{definition}
 
 \begin{theorem}
@@ -66,7 +71,6 @@ Convention: $0\log(0) = 0$.
 
 Using definition of expected value: $H_p(X) = \mathbb{E}\paren{-\log_q(p(X)) = \mathbb{E}\paren{\frac{1}{\log_q(p(X))}}}$.
 
-Properties of Entropy:
 \begin{definition}\label{def:entropy-mutual-info-def}
     Let $X, Y$ be discrete random variables with marginal distributions $p(x), p(y)$ and with joint distribution $p(x, y)$.
     We define the following:
@@ -74,7 +78,8 @@ Properties of Entropy:
         \text{Conditional Entropy:} & \quad H(X \mid Y) = -\mathbb{E}\paren{\log p(X \mid Y)} \\
         \text{Joint Entropy:}       & \quad H(X, Y) = -\mathbb{E}\paren{\log p(X, Y)} \\
         \text{Relative Entropy:}    & \quad D(p(x) \| q(x)) = \mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}} \text{with the conventions} ... \\
-        \text{Mutual information:}  & \quad I(X; Y) \defeq D(p(x, y) \| p(x)p(y))
+        \text{Mutual information:}  & \quad I(X; Y) \defeq D(p(x, y) \| p(x)p(y)) \\
+        \text{Conditional Mutual information:}  & \quad I(X; Y \mid Z) \defeq H(X \mid Z) - H(X \mid Y, Z)
     \end{align*}
 \end{definition}
 
@@ -82,7 +87,6 @@ Properties of Entropy:
     From now on, we always define the two discrete random variables $X, Y$ from Definition~\ref{def:entropy-mutual-info-def}.
 \end{remark}
 
-\newpage
 \begin{remark}
     Under the assumptions of Definition~\ref{def:entropy-mutual-info-def}, we have
     \begin{align*}
@@ -102,29 +106,49 @@ Properties of Entropy:
     \end{center}
     We can calculate the relative entropies for an example. The more alike the distributions are, the closer to zero the relative entropy is.
     Let $X \sim B(20, \alpha)$ and $Y \sim B(20, \beta)$ with $\paren{\alpha, \beta} \in [0, 1]^2$.
+    \begin{align*}
+                                 & \quad D(p(x) \| q(x)) = \sum_{x = 0}^{20}{p(x) \log \frac{p(x)}{q(x)}} \\
+        \alpha=0, \beta=1:       & \quad D(p(x) \| q(x)) = 0 \log \frac{0}{1} + 1 \log \frac{1}{0} = 0 + \infty = \infty \\
+        \alpha=0.1, \beta=0.9:   & \quad D(p(x) \| q(x)) \approx 50.7 \\
+        \alpha=0.3, \beta=0.7:   & \quad D(p(x) \| q(x)) \approx 9.8 \\
+        \alpha= 0.5, \beta= 0.5: & \quad D(p(x) \| q(x)) = \sum_{x = 0}^{20}{p(x) \log 1} = 0 \\
+    \end{align*}
     \begin{center}
         \includegraphics[width=1.0\linewidth]{../plots/relative_entropy_binomial_distributions.pdf}
     \end{center}
-    \begin{align*}
-        D(p(x) \| q(x)) &= \sum_{x = 0}^{20}{p(x) \log \frac{p(x)}{q(x)}}                                                             \\
-        D(p(x) \| q(x)) &= 0 \log \frac{0}{1} + 1 \log \frac{1}{0} = 0 + \infty = \infty                && (\alpha=0, \beta=1)        \\
-        D(p(x) \| q(x)) &\approx 35.2                                                                   && (\alpha=0.1, \beta=0.9)    \\
-        D(p(x) \| q(x)) &\approx 6.8                                                                    && (\alpha=0.3, \beta=0.7)    \\
-        D(p(x) \| q(x)) &= \sum_{x = 0}^{20}{p(x) \log 1} = 0                                           && (\alpha= 0.5, \beta= 0.5)
-    \end{align*}
 \end{remark}
 
 \newpage
-How do these concepts relate?
-
-TODO: Add a venn diagram visualisation.
+\subsection{Chain Rules and Mutual Information}
+\begin{remark}
+    The relationship between entropy, conditional entropy and mutual information can be visualized:
+    \begin{center}
+        \includegraphics[width=1.0\linewidth]{../plots/entropy_mutual_info_venn_diagram.pdf}
+    \end{center}
+\end{remark}
 
 \begin{theorem}
-    The chain rule holds:
-    \begin{align*}
-        H(X, Y) = H(X) + H(Y \mid X)
-    \end{align*}
+    The following statements about Entropy and Mutual Information are called Chain Rules:
+    \begin{enumerate}
+        \item
+        \item
+    \end{enumerate}
 \end{theorem}
+\begin{proof}
+\end{proof}
+
+\begin{corollary}
+\end{corollary}
+\begin{proof}
+\end{proof}
+
+\begin{corollary}
+    The following statements are specialized for two random variables $X, Y$:
+    \begin{enumerate}
+        \item $H(X, Y) = H(X) + H(Y \mid X)$
+        \item
+    \end{enumerate}
+\end{corollary}
 \begin{proof}
     \begin{align*}
         H(X, Y) &= -\mathbb{E}\paren{\log p(X, Y)}                                          && \text{(def. entropy)}        \\
@@ -134,16 +158,8 @@ TODO: Add a venn diagram visualisation.
     \end{align*}
 \end{proof}
 
-\newpage
-\begin{remark}
-    The relationship between entropy, conditional entropy and mutual information can be visualized:
-    \begin{center}
-        \includegraphics[width=1.0\linewidth]{../plots/entropy_mutual_info_venn_diagram.pdf}
-    \end{center}
-\end{remark}
-
 \begin{theorem}
-    We can formalise the visual insight from before:
+    There are multiple equivalent ways to express Mutual Information:
     \begin{enumerate}
         \item $I(X; Y) = H(Y) - H(Y | X)$
         \item $I(X; Y) = I(Y; X)$
@@ -185,7 +201,8 @@ TODO: Add a venn diagram visualisation.
 
 
 \newpage
-\section{Properties of Entropy and Mutual Information}
+\section{Inequalities for Entropy and Mutual Information}
+\subsection{Convexity and Jensen Inequality}
 
 \begin{remark}
     We use the common definition of convex functions, concave functions from analysis.
@@ -194,7 +211,7 @@ TODO: Add a venn diagram visualisation.
 % TODO: Make sure which theorems and definitions assume discrete.
 
 \begin{theorem}
-    Let $X$ be a random variable (not necessarily discrete) and $f$ a function.
+    Let $X$ be a random variable (not necessarily discrete) and $f$ a function. % TODO: Maybe we just make it discrete. Seems like the easier option!
     \begin{enumerate}
         \item If $f$ is convex, we have $\mathbb{E} f(X) \ge f(\mathbb{E} X)$.
         \item If $f$ is concave, we have $\mathbb{E} f(X) \le f(\mathbb{E} X)$.
@@ -204,6 +221,7 @@ TODO: Add a venn diagram visualisation.
     \begin{enumerate}
         \item
             % Let $n \in \mathbb{N}, n \gt 2$ and $p_1, \cdots, p_n \in $ and $x_1, \cdots, x_n$.
+            Distinguish two cases. If $\mathcal{X}$ is finite: \\
             We show $f\paren{\sum_{i=1}^{n}{p_i x_i}} \le \sum_{i=1}^{n}{p_i f(x_i)}$ by induction. \\
             The definition of convexity yields the base case $i = 2$: $f(p_1 x_1 + p_2 x_2) \le p_1 f(x_1) + p_2 f(x_2)$. \\
             We assume the claim holds for $n - 1$ and the induction case goes as follows: \\
@@ -214,8 +232,7 @@ TODO: Add a venn diagram visualisation.
                 && \text{(induct. hypo. applies bc. of $\sum_{i = 2}^{n}{\frac{p_i}{1 - p_1}}$ = 1)} \\
                 &= \sum_{i=1}^{n}{p_i f\paren{{x_i}}}
             \end{align*}
-            If $\mathcal{X}$ is finite, the claim follows.
-            If $\mathcal{X}$ is countably infinite, the claim follows using ... .
+            Else: \\% If $\mathcal{X}$ is countably infinite, the claim follows using ... .
             % TODO: Case missing?
         \item
             Follows from part 1 applied to $-f$.
@@ -256,32 +273,93 @@ TODO: Add a venn diagram visualisation.
     \end{enumerate}
 \end{proof}
 
-\begin{corollary}
+\begin{remark}
+    There are multiple natural questions we can ask about Entropy.
+    We will look at an example for each of them and then prove the results in the follow-up theorem.
+    \begin{enumerate}
+        \item What distribution maximises the value of Entropy?
+            I simulated 
+
+            From the data, it seems plausible that the uniform distribution maximises entropy. We
+            % TODO: How difficult is it to sample from the simplex?
+        \item Can joint entropy increase if we add redundant information? \\
+            Let $\Omega = \{1, 2\}$, p uniform TODO, $X, Y: \Omega \rightarrow \mathbb{R}$, $X(\omega) = \omega$ and $Y(\omega) = 2\omega$.
+            $Y$ is redundant to $X$, as $Y = 2X$. \\
+            % We can now calculate the entropy to verify the intuition, that adding $Y
+            \begin{align*}
+                H(X) &= \sum_{i = 1}^{2}{-0.5 \log 0.5} = -\log 0.5 = \log 2 = 1 \\
+                H(X, Y) &= \sum_{(i, j) \in \{(1, 2), (2, 4)\}}{-0.25 \log 0.25} = 2 * 0.25 * 2 = 1
+                % TODO: These sums could maybe be expressed more formally first and then substituted in
+            \end{align*}
+            Pairs like $(1, 4)$ have probability zero and do not contribute to the sum in $H(X, Y)$.
+            This example suggest entropy never increases. We will prove that in the follow-up theorem.
+        \item What happens to the Entropy if we add independent noise to our measurements? \\
+            Let $X \sim U(\{1, 2, 3, 4\})$ be the original signal, $N \sim B(3, 0.5)$ the noise and let $X, N$ be independent. 
+            Then $S \defeq X + N$ is a noisy signal. \\
+
+            We can compute the crirical variance $a$.
+            % TODO
+    \end{enumerate}
+\end{remark}
+
+\begin{theorem}
+    We can formalise the previous observations including some more:
     \begin{enumerate}
         \item More information can only \textit{decrease} entropy: $H(X \mid Y) \le H(X)$.
         \item The uniform distribution maximizes entropy: \\
             $H(X) \le \log |\mathcal{X}|$ and $H(X) = \log |\mathcal{X}| \iff X \sim U(\mathcal{X})$.
-        \item $p \mapsto H(p)$ is concave.
+        \item If information from $Y$ does not add anything to $X$, then $Y$ must be derived from $X$: \\ % TODO: Dis true backwards?
+            $H(Y \mid X) = 0 \implies \exists f\vcentcolon Y = f(X) \; \text{almost surely}$
+        \item If independent noise is added to a random variable, entropy can only increase: \\
+            Set $Z = X + Y$. Then we have $X, Y \text{independent} \implies H(X) \le H(Z) \land H(Y) \le H(Z)$
     \end{enumerate}
-\end{corollary}
+\end{theorem}
 \begin{proof}
+    \newcommand{\injoint}{\in \mathcal{X} \times \mathcal{Y}}
+
     \begin{enumerate}
         \item $0 \le I(X; Y) = H(X) - H(X \mid Y) \iff H(X \mid Y) \le H(X)$
         \item
             Let $Y \sim U(\mathcal{X})$ st. $\forall x \in \mathcal{X}\vcentcolon q(x)=\frac{1}{|\mathcal{X}|}$.
             \begin{align*}
-                0 &\le D(p(x) \| q(x)) \\
-                &= \mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}} \\
-                &= \sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}} \\
-                &= \sum_{x \in \mathcal{X}}{p(x) \log\paren{p(x)|\mathcal{X}|}} \\
-                &= \sum_{x \in \mathcal{X}}{p(x) \log p(x)} + |\mathcal{X}| \sum_{x \in \mathcal{X}}{p(x)}\\
+                0 &\le D(p(x) \| q(x))
+                = \mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}}
+                = \sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}} \\
+                &= \sum_{x \in \mathcal{X}}{p(x) \log\paren{p(x)|\mathcal{X}|}}
+                = \sum_{x \in \mathcal{X}}{p(x) \log p(x)} + |\mathcal{X}| \sum_{x \in \mathcal{X}}{p(x)}\\
                 &= -H(X) + |\mathcal{X}| = |\mathcal{X}| - H(X)
             \end{align*}
             This is equivalent to $H(X) \le \log |\mathcal{X}|$.
+            TODO: Iff part.
         \item
+            We have $H(Y \mid X) = -\mathbb{E}\paren{\log p(Y \mid X)} = \sum_{(x, y) \injoint}{-p(x, y) \log p(y \mid x)}$. \\
+            Additionally, we have $\forall (x, y) \in \mathcal{X} \times \mathcal{Y}: -p(x, y) \log p(y \mid x) \ge 0$. \\
+            Combining those facts, we get
             \begin{align*}
-                H(p) = -p \log p = % TODO: Idk how interesting is this...
+                &H(Y \mid X) = 0 \\
+                \iff &\forall (x, y) \injoint: p(x, y) \log p(y \mid x) = 0 \\
+                \iff &\forall (x, y) \injoint: p(x, y) = 0 \oplus \log p(y \mid x) = 0 \\
+                \iff &\forall (x, y) \injoint: p(x, y) = 0 \oplus p(y \mid x) = 1
             \end{align*}
+            This tells us, that either $p(x, y) = 0$ or $p(x, y) = p(y \mid x)p(x) = p(x) = 1$. \\
+            Now we can finish up the argument. Set $A = \{x \in \mathcal{X}: p(x) > 0\}$. \\
+            Define $(y_x)_{x \in \mathcal{X}}$ such that $\forall x \in \mathcal{X}: p(x, y_x) > 0$. \\
+            Set $f: A \rightarrow \mathcal{Y}, x \mapsto y_x$. This gets us $Im f = {y_x: x \in \mathcal{X}} = {y \in \mathcal{Y}: p(x, y) > 0}$. \\
+            So $Y = f(X) \; \text{almost surely}$.
+        \item
+            We have
+            \begin{align*}
+                 H(Z \mid X) &= -\mathbb{E}\paren{\log p(Z \mid X)} = \sum_{(x, y) \injoint}{-p(x, y) \log P[Z = x + y \mid X = x]} \\
+                 &= \sum_{(x, y) \injoint}{-p(x, y) \log P[X + Y = x + y \mid X = x]} \\
+                 &= \sum_{(x, y) \injoint}{-p(x, y) \log P[Y = y \mid X = x]} \\
+                 &= -\mathbb{E}\paren{\log p(Y \mid X)} = H(Y \mid X)
+            \end{align*}
+            $H(Z, X) = H(X) + H(Z \mid X)$
+            $H(Y, X) = H(X) + H(Y \mid X)$
+            % TODO: Fix this shit!
+
+            $H(Y, X) = H(X) + H(Y \mid X)$
+            Using the Chain rule, we get $H(X, Y) = H(Y \mid X) + H(X)$
     \end{enumerate}
 \end{proof}
 
@@ -294,10 +372,21 @@ TODO: Add a venn diagram visualisation.
 % TODO: Add deep learning example.
 
 \newpage
-\section{Axiomatic Definition}
+\subsection{The Information Inequality}
+%         \item $p \mapsto H(p)$ is concave.
+
+Hello
+
+\newpage
+\subsection{Application to Optimisation}
+
+Hello
 
 
 \bibliographystyle{alpha}
 \bibliography{sample}
+
+% TODO: \input{chapters/ch1_einleitung.tex}
+% TODO: \FloatBarrier
 
 \end{document}

@@ -2,8 +2,12 @@ import entropy_function_plot
 import entropy_mutual_info_venn_diagram
 import pointwise_rel_entropy_continuation
 import relative_entropy_binomial_distributions
+import noise_only_increases_entropy
+import optimisation_example
 
 entropy_function_plot.main()
 entropy_mutual_info_venn_diagram.main()
 pointwise_rel_entropy_continuation.main()
 relative_entropy_binomial_distributions.main()
+noise_only_increases_entropy.main()
+optimisation_example.main()

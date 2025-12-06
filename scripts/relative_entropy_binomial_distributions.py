@@ -40,7 +40,7 @@ def main():
         x, y = subplot
         distr1 = plot_bars(x, 'blue')
         distr2 = plot_bars(y, 'green')
-        relative_entropy = entropy(distr1, distr2)
+        relative_entropy = entropy(distr1, distr2, base=2)
         print(f"{relative_entropy=}")
         set_ax_settings(ax, f"$(p,q) = ({x}, {y})$")
 
