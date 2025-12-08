@@ -1,1 +1,4 @@
-TODO
+# TODO
+
+def main():
+    pass

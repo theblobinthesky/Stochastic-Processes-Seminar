@@ -27,7 +27,7 @@ def main():
     Z[case3] = 0.0
 
 
-    fig = plt.figure(figsize=(10, 7), tight_layout=True)
+    fig = plt.figure(figsize=(8, 8), tight_layout=True)
     ax = fig.add_subplot(111, projection='3d')
 
     C = np.zeros((num, num, 4))
@@ -45,9 +45,9 @@ def main():
         antialiased=True
     )
 
-    ax.set_xlabel(r"$q$", fontsize=16)
-    ax.set_ylabel(r"$p$", fontsize=16)
-    ax.set_zlabel(r"$p \log \frac{p}{q}$", fontsize=16)
+    ax.set_xlabel(r"$q$", fontsize=24)
+    ax.set_ylabel(r"$p$", fontsize=24)
+    ax.set_zlabel(r"$p \log \frac{p}{q}$", fontsize=24)
 
     handles = [
         ax.plot([], [], [], marker='s', color='red', linestyle='', label=r'$p = 0$'),
@@ -58,10 +58,9 @@ def main():
     ax.legend(
         handles=[handle[0] for handle in handles],
         loc='center right',
-        fontsize=16
+        fontsize=24
     )
     fig.savefig("../plots/pointwise_rel_entropy_continuation.pdf")
 
 if __name__ == "__main__":
     main()
-

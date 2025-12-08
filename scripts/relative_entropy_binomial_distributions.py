@@ -13,7 +13,7 @@ def main():
         (0.5, 0.5),
     ]
     supp_size = 20
-    fig, axs = plt.subplots(1, len(subplots), figsize = (len(subplots) * 5, 4), tight_layout=True)
+    fig, axs = plt.subplots(2, len(subplots) // 2, figsize = (len(subplots), len(subplots)), tight_layout=True)
 
     def set_ax_settings(ax, title):
         ax.set_title(title)
@@ -36,7 +36,8 @@ def main():
 
         return distr
 
-    for ax, subplot in zip(axs, subplots):
+    axes = [axs[0, 0], axs[0, 1], axs[1, 0], axs[1, 1]]
+    for ax, subplot in zip(axes, subplots):
         x, y = subplot
         distr1 = plot_bars(x, 'blue')
         distr2 = plot_bars(y, 'green')

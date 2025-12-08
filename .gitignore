@@ -1,5 +1,11 @@
 *.aux
 *.log
 *.out
+*.bcf
+*.xml
+*.toc
+*blx.bib
+*.bbl
+*.blg
 __pycache__
 venv

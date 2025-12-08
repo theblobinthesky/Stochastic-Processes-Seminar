@@ -1,19 +1,15 @@
 \documentclass{article}
 
-% Language setting
-% Replace `english' with e.g. `spanish' to change the document language
 \usepackage[english]{babel}
-
-% Set page size and margins
-% Replace `letterpaper' with `a4paper' for UK/EU standard size
-\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
-
-% Useful packages
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{graphicx}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage{amsmath, amsfonts, graphicx}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
-\usepackage{dsfont, mathtools, amsthm, diagbox}
+\usepackage{dsfont, mathtools, amsthm, diagbox, caption, subcaption}
+\usepackage[
+    backend=bibtex,
+    style=alphabetic,
+]{biblatex}
+\addbibresource{../bibliography.bib} %Imports bibliography file
 
 \title{Introduction to Entropy}
 \author{Erik Stern}
@@ -21,6 +17,7 @@
 \newcommand{\defeq}{\vcentcolon=}
 \newcommand{\eqdef}{=\vcentcolon}
 \newcommand{\paren}[1]{\left(#1\right)}
+\DeclareMathOperator{\supp}{supp}
 
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}
@@ -43,49 +40,134 @@ Your abstract.
 \section{Entropy and Mutual information}
 \subsection{Definitions and Conventions}
 
-Let $(\mathcal{X}, \mathcal{A}, \mathds{P_\mathcal{A}})$ be a probability space. 
-Let $X: \mathcal{X} \rightarrow \mathbb{R}$ be a discrete random variable on the space with probability density function $f_X: \mathcal{X} \rightarrow \mathbb{R}_+$. We use the shorthand notation $p(x) = \mathds{P_\mathcal{A}}[X = x]$. Let $(\mathcal{Y}, \mathcal{B}, \mathds{P_\mathcal{B}})$ be a probability space. 
-Let $Y: \mathcal{Y} \rightarrow \mathbb{R}$ be a discrete random variable on the space with probability density function $f_Y: \mathcal{Y} \rightarrow \mathbb{R}_+$. We use the shorthand notation $p(y) = \mathds{P_\mathcal{B}}[X = x]$.
-
-This is a test.
-
 \begin{definition}
-    TODO: This is all incorrectly defined.
-    Let $X$ be a discrete random variable with distribution $p(x)$. \\
-    We define entropy as $H_q(X) = \mathbb{E}\paren{-\log_q p(X)}$.
-    Since entropy was originally defined in the context of compression by Shannon in TODO,
-    We usually use $q = 2$ and $H(X) = \mathbb{E}\paren{-\log_2 p(X)}$.
-    TODO: Add $log = log_2$ convention.
+    Let $(\Omega, \mathcal{A}, \mathds{P})$ be a probability space, $\mathcal{X}, \mathcal{Y}$ be countable sets and
+    $X: \Omega \rightarrow \mathcal{X}$, $Y: \Omega \rightarrow \mathcal{Y}$ be discrete random variables on $(\Omega, \mathcal{A}, \mathds{P})$. \\
+    We can then define
+    \begin{align*}
+        \text{Entropy wrt. base:}       &\quad H_q(X) = \mathbb{E}\paren{-\log_q p(X)} = -\sum_{x \in \supp(X)}{p(x) \log_q p(x)} \\
+        \text{Entropy conventionally:}  &\quad H(X) = H_2(X)
+    \end{align*}
 \end{definition}
 
-\begin{theorem}
-Existence of Entropy: If $\mathcal{X}$ is finite, $H_q(X)$ exists.
+\begin{remark}
+    \begin{enumerate}
+    \item
+        We use the shorthand notations $p(x) = \mathds{P}[X = x]$ and $p(y) = \mathds{P}[Y = y]$.
+        If the context is unclear, the normal notations will be used to avoid confusion!
 
-Example, when Entropy does not exist:
-Let $X = $,
-\end{theorem}
-\begin{proof}
-\end{proof}
+    \item
+        Currently, $\mathcal{X}, \mathcal{Y} \subset \mathbb{R}$ is not required.  
+        Later theorems like Jensens Inequality do require real-valued random variables.
 
-Convention: $0\log(0) = 0$.
+    \item We use the convention $\log = \log_2$, as the entropy $H$ is defined wrt. base $2$.
 
-Using definition of expected value: $H_p(X) = \mathbb{E}\paren{-\log_q(p(X)) = \mathbb{E}\paren{\frac{1}{\log_q(p(X))}}}$.
+    \item We also use the following convention and justify it through a continuity argument:
+        \begin{align*}
+            0 \log 0 = \lim_{x \to 0^+}{x \log x}
+            = \lim_{x \to 0^+}\frac{\log x}{\frac{1}{x}}
+            = \lim_{x \to 0^+}\frac{\frac{1}{\ln(2) x}}{-\frac{1}{x^2}}
+            = \lim_{x \to 0^+}\frac{-x}{\ln(2)} = 0
+        \end{align*}
+        This choice is sensible, as $\log x$ is not defined for negative $x$.
+    
+        \item The conventions, definitions and theorems are from Definitions, Theorems, Remarks and Exercises 
+        in \textit{Elements of Information Theory, second edition} (see \cite{Thomas:ElementsOfInformationTheory}).
+    \end{enumerate}
+\end{remark}
 
+\begin{remark}
+    Note that if $|\mathcal{X}|$ is finite, $(\forall p \in \mathbb{R}_+: H_p(X) \; \text{finite})$
+    and $H(X) \le |\mathcal{X}|$ (see Theorem \ref{theorem:more-entropy-observations}).
+    For $|\mathcal{X}|$ countably infinite, there are counterexamples where $H_p(X) = \infty$ (see \cite{MathStackexchange:CanEntropyBeInfinite}).
+    From now on, we will assume that entropy is finite.
+\end{remark}
+
+\newpage
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{../plots/entropy_weighted_coin.pdf}
+        \caption{Bernoulli Rand. Variable Entropy $H(X_p)$}
+        \label{fig:bernoulli-entropy}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{../plots/entropy_geo_variable.pdf}
+        \caption{Geometric Rand. Variable Entropy $H(X_p)$}
+        \label{fig:geometric-entropy}
+    \end{subfigure}
+\end{figure}
+
+\begin{example}
+    Let $p \in (0, 1)$ and $X_p \sim B(1, p)$ be a weighted coin flip. \\
+    We can calculate the Entropy of $X_p$: $H(X_p) = -p \log p - (1-p) \log (1-p)$. \\
+    A visual inspection (see Figure \ref{fig:bernoulli-entropy}) reveals that $H(X_p)$ seems to be maximised for $p$ and minimised for $p \in \{0, 1\}$.
+    An increase in uncertainty about the result of the coin flip seems to correspond with an increase in entropy.
+\end{example}
+
+\begin{example}
+    Let $p \in (0, 1)$ and $X_p \sim G(p)$ be the number of times a weighted coin is flipped, until the first head occurs.
+    We will calculate the Entropy of $X_p$. It will require the two well-known series:
+    \begin{align}
+        \forall r \in (0, 1)&\vcentcolon \sum_{n \in \mathbb{N}_0}{r^n} = \frac{1}{1 - r} \label{series:nexpr-n}\\
+        \forall r \in (0, 1)&\vcentcolon \sum_{n \in \mathbb{N}_0}{n r^n} = \frac{r}{(1 - r)^2} \label{series:expr-n}
+    \end{align}
+    We can now directly calculate the Entropy of $X_p$:
+    \begin{align*}
+        H(X_p) &= \sum_{x \in \mathbb{N}}{-p(x) \log p(x)}                                  && \text{(Def. of Entropy)}\\
+        &= -\sum_{x \in \mathbb{N}}{(1-p)^{x-1} p \log\paren{(1-p)^{x-1} p}}                && \text{(Subst. in geometric density function)} \\
+        &= -\sum_{x \in \mathbb{N}}{(1-p)^{x-1} p \paren{(x-1) \log(1-p) + \log p}}         && \text{(Log rules)} \\
+        &= -p \log(1-p) \sum_{x \in \mathbb{N}_{0}}\paren{(1-p)^{x} x} - p \log p \sum_{x \in \mathbb{N}_{0}}\paren{(1-p)^{x}}      && \text{(Factor out constants)} \\
+        &= -p \log(1-p) \frac{1-p}{(1 - (1-p))^2} - p \log p \frac{1}{1 - (1-p)}            && \text{(Use series \ref{series:nexpr-n} and \ref{series:expr-n})}\\
+        &= -p \log(1-p) \frac{1-p}{p^2} - p \log p \frac{1}{p}                              && \text{(Simplify expr.)} \\
+        &= \frac{-(1-p) \log(1-p) - p \log p}{p}                                            && \text{(Simplify expr.)}
+    \end{align*}
+    For $p=0.5$ we get $H(X_{0.5}) = \frac{-0.5 \log 0.5 - 0.5 \log 0.5}{0.5} = -2 \log 0.5 = 2$. \\
+    We can visually inspect $(0, 1) \rightarrow \mathbb{R}, p \mapsto H(X_p)$ (see Figure \ref{fig:geometric-entropy}) to get a feeling for the entropy of $X_p$.
+    An increase in $p$, so less variance and concentration towards zero, seems to be linked to a lower entropy and vice-versa.
+
+    TODO: Complete the q
+\end{example}
+
+\newpage
 \begin{definition}\label{def:entropy-mutual-info-def}
     Let $X, Y$ be discrete random variables with marginal distributions $p(x), p(y)$ and with joint distribution $p(x, y)$.
     We define the following:
     \begin{align*}
         \text{Conditional Entropy:} & \quad H(X \mid Y) = -\mathbb{E}\paren{\log p(X \mid Y)} \\
         \text{Joint Entropy:}       & \quad H(X, Y) = -\mathbb{E}\paren{\log p(X, Y)} \\
-        \text{Relative Entropy:}    & \quad D(p(x) \| q(x)) = \mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}} \text{with the conventions} ... \\
-        \text{Mutual information:}  & \quad I(X; Y) \defeq D(p(x, y) \| p(x)p(y)) \\
-        \text{Conditional Mutual information:}  & \quad I(X; Y \mid Z) \defeq H(X \mid Z) - H(X \mid Y, Z)
+        \text{Relative Entropy:}    & \quad D(p(x) \| q(x)) = \mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}} \\
+                                    & \quad \text{with the conventions} 0 \log 0 = 0,   \\
+        \text{Mutual information:}  & \quad I(X; Y) = D(p(x, y) \| p(x)p(y)) \\
+        \text{Conditional Mutual information:}  & \quad I(X; Y \mid Z) = H(X \mid Z) - H(X \mid Y, Z)
     \end{align*}
 \end{definition}
 
 \begin{remark}
     From now on, we always define the two discrete random variables $X, Y$ from Definition~\ref{def:entropy-mutual-info-def}.
 \end{remark}
+
+\newpage
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{../plots/pointwise_rel_entropy_continuation.pdf}
+        \caption{Pointwise Relative Entropy}
+        \label{fig:pointwise-rel-entropy}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{../plots/relative_entropy_binomial_distributions.pdf}
+        \caption{Relative Entropies of Binomial Distributions}
+        \label{fig:rel-entropy-bionm-distrib}
+    \end{subfigure}
+\end{figure}
+
 
 \begin{remark}
     Under the assumptions of Definition~\ref{def:entropy-mutual-info-def}, we have
@@ -100,11 +182,8 @@ Using definition of expected value: $H_p(X) = \mathbb{E}\paren{-\log_q(p(X)) = \
         \item \textbf{Case $p = q = 0$:} Case 1 logic yields $\lim_{q \to 0^+} p \log \frac{p}{q} = \infty$ and Case 2 logic yields $0 \log \frac{0}{0} = 0$. 
     \end{enumerate}
     As we want $\sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}}$ to sum over $x \in \mathcal{X}, p(x) > 0$, we choose the convention $0 \log \frac{0}{0} = 0$.
-    We can visualize the the pointwise relative entropy function $(p, q) \mapsto \log \frac{p}{q}$:
-    \begin{center}
-        \includegraphics[width=0.6\linewidth]{../plots/pointwise_rel_entropy_continuation.pdf}
-    \end{center}
-    We can calculate the relative entropies for an example. The more alike the distributions are, the closer to zero the relative entropy is.
+    Figure \ref{fig:pointwise-rel-entropy} visualizes the the pointwise relative entropy function $(p, q) \mapsto \log \frac{p}{q}$:
+    We can now calculate the relative entropies for an example.
     Let $X \sim B(20, \alpha)$ and $Y \sim B(20, \beta)$ with $\paren{\alpha, \beta} \in [0, 1]^2$.
     \begin{align*}
                                  & \quad D(p(x) \| q(x)) = \sum_{x = 0}^{20}{p(x) \log \frac{p(x)}{q(x)}} \\
@@ -113,9 +192,8 @@ Using definition of expected value: $H_p(X) = \mathbb{E}\paren{-\log_q(p(X)) = \
         \alpha=0.3, \beta=0.7:   & \quad D(p(x) \| q(x)) \approx 9.8 \\
         \alpha= 0.5, \beta= 0.5: & \quad D(p(x) \| q(x)) = \sum_{x = 0}^{20}{p(x) \log 1} = 0 \\
     \end{align*}
-    \begin{center}
-        \includegraphics[width=1.0\linewidth]{../plots/relative_entropy_binomial_distributions.pdf}
-    \end{center}
+    Figure \ref{fig:rel-entropy-bionm-distrib} visualizes the two discrete distribution functions in the cases above.
+    Intuitively, the more overlap the distributions have, the closer to zero the relative entropy is.
 \end{remark}
 
 \newpage
@@ -188,8 +266,10 @@ Using definition of expected value: $H_p(X) = \mathbb{E}\paren{-\log_q(p(X)) = \
             \end{align*}
         \item The definition of mutual information yields:
             \begin{align*}
-                I(X; Y) &= D(p(x, y) \| p(x)p(y))       && \text{(by def.~of mutual info.)} \\
-                        &= D(p(y, x) \| p(y)p(x))       && \text{(TODO: Idk)}\\
+                I(X; Y) &= D(p(x, y) \| p(x)p(y))                       && \text{(by def.~of mutual info.)} \\
+                        &= D(P[X = x, Y = y] \| P[X = x]P[Y = y])       && \text{(use clear notation)} \\
+                        &= D(P[Y = y, X = x] \| P[Y = y]P[X = x])       && \text{(use commutativity)} \\
+                        &= D(p(y, x) \| p(y)p(x))                       && \text{(back to conventional notation)}\\
                         &= I(X; Y)
             \end{align*}
         \item Follows directly from 2 and 3.
@@ -203,22 +283,19 @@ Using definition of expected value: $H_p(X) = \mathbb{E}\paren{-\log_q(p(X)) = \
 \end{proof}
 
 
-
-% TODO: Relative entropy is often used as a distance, but not actually a metric.
-
-
 \newpage
 \section{Inequalities for Entropy and Mutual Information}
-\subsection{Convexity and Jensen Inequality}
+\subsection{Convexity and Jensens Inequality}
 
 \begin{remark}
     We use the common definition of convex functions, concave functions from analysis.
+    From now on, $X, Y$ have to be real-valued random variables.
 \end{remark}
 
 % TODO: Make sure which theorems and definitions assume discrete.
 
 \begin{theorem}
-    Let $X$ be a random variable (not necessarily discrete) and $f$ a function. % TODO: Maybe we just make it discrete. Seems like the easier option!
+    Let $f: \Omega \rightarrow \mathbb{R}$ a function.
     \begin{enumerate}
         \item If $f$ is convex, we have $\mathbb{E} f(X) \ge f(\mathbb{E} X)$.
         \item If $f$ is concave, we have $\mathbb{E} f(X) \le f(\mathbb{E} X)$.
@@ -266,7 +343,7 @@ Using definition of expected value: $H_p(X) = \mathbb{E}\paren{-\log_q(p(X)) = \
             \end{equation*}
 
         \item 
-            We can prove this using Jensens inequality on a \textit{concave} function: % TODO: Make sure we use the support correctly.
+            We can prove this using Jensens Inequality on a \textit{concave} function: % TODO: Make sure we use the support correctly.
             \begin{align*}
                 -D(p(x) \| q(x)) &= -\mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}}         && \text{(def. of relative entropy)}            \\
                 &\le -\log\paren{\mathbb{E}_p \frac{p(X)}{q(X)}}                        
@@ -309,7 +386,7 @@ Using definition of expected value: $H_p(X) = \mathbb{E}\paren{-\log_q(p(X)) = \
     \end{enumerate}
 \end{remark}
 
-\begin{theorem}
+\begin{theorem} \label{theorem:more-entropy-observations}
     We can formalise the previous observations including some more:
     \begin{enumerate}
         \item More information can only \textit{decrease} entropy: $H(X \mid Y) \le H(X)$.
@@ -351,7 +428,7 @@ Using definition of expected value: $H_p(X) = \mathbb{E}\paren{-\log_q(p(X)) = \
             This tells us, that either $p(x, y) = 0$ or $p(x, y) = p(y \mid x)p(x) = p(x) = 1$. \\
             Now we can finish up the argument. Set $A = \{x \in \mathcal{X}: p(x) > 0\}$. \\
             Define $(y_x)_{x \in \mathcal{X}}$ such that $\forall x \in \mathcal{X}: p(x, y_x) > 0$. \\
-            Set $f: A \rightarrow \mathcal{Y}, x \mapsto y_x$. This gets us $Im f = {y_x: x \in \mathcal{X}} = {y \in \mathcal{Y}: p(x, y) > 0}$. \\
+            Set $f: A \rightarrow \mathcal{Y}, x \mapsto y_x$. This gets us $Im f = \{y_x: x \in \mathcal{X}\} = \{y \in \mathcal{Y}: p(x, y) > 0\}$. \\
             So $Y = f(X) \; \text{almost surely}$.
         \item
             We have
@@ -387,13 +464,13 @@ Hello
 \newpage
 \subsection{Application to Optimisation}
 
+
+% TODO: Relative entropy is often used as a distance, but not actually a metric.
+
+
 Hello
 
-
-\bibliographystyle{alpha}
-\bibliography{sample}
-
-% TODO: \input{chapters/ch1_einleitung.tex}
-% TODO: \FloatBarrier
+\medskip
+\printbibliography
 
 \end{document}
