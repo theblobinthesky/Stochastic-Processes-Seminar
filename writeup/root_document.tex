@@ -18,6 +18,7 @@
 \newcommand{\eqdef}{=\vcentcolon}
 \newcommand{\paren}[1]{\left(#1\right)}
 \DeclareMathOperator{\supp}{supp}
+\newcommand{\injoint}{\in \mathcal{X} \times \mathcal{Y}}
 
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}
@@ -31,8 +32,12 @@
 \begin{document}
 \maketitle
 
+% TODO: Clean this up.
 \begin{abstract}
-Your abstract.
+    This seminar paper provides a foundational overview of Information Theory, focusing on the mathematical properties of Shannon Entropy and Mutual Information. 
+    We establish key definitions and rigorously prove fundamental inequalities, including the non-negativity of entropy and the Data Processing Inequality, 
+    using Jensen's Inequality. To build intuition, theoretical results are complemented by numerical simulations of Bernoulli and Geometric random variables. 
+    Finally, we introduce Relative Entropy (KL-Divergence) and discuss its geometric properties and applications in optimization.
 \end{abstract}
 
 \tableofcontents
@@ -41,20 +46,25 @@ Your abstract.
 \subsection{Definitions and Conventions}
 
 \begin{definition}
-    Let $(\Omega, \mathcal{A}, \mathds{P})$ be a probability space, $\mathcal{X}, \mathcal{Y}$ be countable sets and
-    $X: \Omega \rightarrow \mathcal{X}$, $Y: \Omega \rightarrow \mathcal{Y}$ be discrete random variables on $(\Omega, \mathcal{A}, \mathds{P})$. \\
+    Let $(\Omega, \mathcal{A}, \mathds{P})$ be a probability space, $\mathcal{X}$ be countable sets and
+    $X: \Omega \rightarrow \mathcal{X}$ be a discrete random variable on $(\Omega, \mathcal{A}, \mathds{P})$.
     We can then define
     \begin{align*}
-        \text{Entropy wrt. base:}       &\quad H_q(X) = \mathbb{E}\paren{-\log_q p(X)} = -\sum_{x \in \supp(X)}{p(x) \log_q p(x)} \\
-        \text{Entropy conventionally:}  &\quad H(X) = H_2(X)
+        \textbf{Entropy wrt. base:}       &\quad H_q(X) = \mathbb{E}\paren{-\log_q p(X)} = -\sum_{x \in \supp(X)}{p(x) \log_q p(x)} \\
+        \textbf{Entropy conventionally:}  &\quad H(X) = H_2(X)
     \end{align*}
 \end{definition}
 
 \begin{remark}
     \begin{enumerate}
     \item
-        We use the shorthand notations $p(x) = \mathds{P}[X = x]$ and $p(y) = \mathds{P}[Y = y]$.
-        If the context is unclear, the normal notations will be used to avoid confusion!
+        Let $\mathcal{X}, \mathcal{Y}$ be countable sets and $X: \Omega \rightarrow \mathcal{X}$, $Y: \Omega \rightarrow \mathcal{Y}$ 
+        be discrete random variables on $(\Omega, \mathcal{A}, \mathds{P})$.
+        From now on, the random variables $X, Y$ are always available for use.
+
+    \item
+        We do \textbf{not} use the shorthand notations $p(x) = \mathds{P}[X = x]$ and $p(y) = \mathds{P}[Y = y]$
+        from \cite{Thomas:ElementsOfInformationTheory}, to keep the notation easily understandable.
 
     \item
         Currently, $\mathcal{X}, \mathcal{Y} \subset \mathbb{R}$ is not required.  
@@ -127,28 +137,11 @@ Your abstract.
     \end{align*}
     For $p=0.5$ we get $H(X_{0.5}) = \frac{-0.5 \log 0.5 - 0.5 \log 0.5}{0.5} = -2 \log 0.5 = 2$. \\
     We can visually inspect $(0, 1) \rightarrow \mathbb{R}, p \mapsto H(X_p)$ (see Figure \ref{fig:geometric-entropy}) to get a feeling for the entropy of $X_p$.
-    An increase in $p$, so less variance and concentration towards zero, seems to be linked to a lower entropy and vice-versa.
+    An increase in $p$ is linked to lower variance and more concentration of the distribution towards zero. 
+    Based on the plot, that increase looks to be linked to a lower entropy and vice-versa.
 
     TODO: Complete the q
 \end{example}
-
-\newpage
-\begin{definition}\label{def:entropy-mutual-info-def}
-    Let $X, Y$ be discrete random variables with marginal distributions $p(x), p(y)$ and with joint distribution $p(x, y)$.
-    We define the following:
-    \begin{align*}
-        \text{Conditional Entropy:} & \quad H(X \mid Y) = -\mathbb{E}\paren{\log p(X \mid Y)} \\
-        \text{Joint Entropy:}       & \quad H(X, Y) = -\mathbb{E}\paren{\log p(X, Y)} \\
-        \text{Relative Entropy:}    & \quad D(p(x) \| q(x)) = \mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}} \\
-                                    & \quad \text{with the conventions} 0 \log 0 = 0,   \\
-        \text{Mutual information:}  & \quad I(X; Y) = D(p(x, y) \| p(x)p(y)) \\
-        \text{Conditional Mutual information:}  & \quad I(X; Y \mid Z) = H(X \mid Z) - H(X \mid Y, Z)
-    \end{align*}
-\end{definition}
-
-\begin{remark}
-    From now on, we always define the two discrete random variables $X, Y$ from Definition~\ref{def:entropy-mutual-info-def}.
-\end{remark}
 
 \newpage
 \begin{figure}[ht]
@@ -169,24 +162,41 @@ Your abstract.
 \end{figure}
 
 
-\begin{remark}
-    Under the assumptions of Definition~\ref{def:entropy-mutual-info-def}, we have
+\begin{definition}\label{def:entropy-mutual-info-def}
+    \begin{align*}
+    \intertext{\noindent We define the following:}
+        \textbf{Conditional Entropy:} & \quad H(X \mid Y) = -\mathbb{E}\paren{\log p_{(X, Y)}(X \mid Y)} \\
+        \textbf{Joint Entropy:}       & \quad H(X, Y) = -\mathbb{E}\paren{\log p_{(X, Y)}(X, Y)}
+    \intertext{\noindent Let $p$ and $q$ be two probability mass functions on the same set $\mathcal{Z}$. We define the following:}
+        \textbf{Relative Entropy:}    & \quad D(p \| q) = \mathbb{E}_{X \sim p}\paren{\log \frac{p(X)}{q(X)}} 
+            \quad \text{with conventions from Remark \ref{remark:relative-entropy-conventions}}
+    \intertext{(Sometimes also called KL-Divergence)}
+    \intertext{\noindent Using Relative Entropy, we can define the Mutual Information between the variables $X, Y$:}
+        \textbf{Mutual Information:}  & \quad I(X; Y) = D(p_{(X, Y)} \| p_X \, p_Y) \\
+    \end{align*}
+\end{definition}
+
+\begin{remark} \label{remark:relative-entropy-conventions}
+    We defined have
     \begin{align*}
         D(p(x) \| q(x)) &= \mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}}                   && \text{(def.~of relative entropy)} \\
                         &= \sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}}        && \text{(def.~of expected value)}
     \end{align*}
     To understand the conventions, we can look at the limit cases:
     \begin{enumerate}
-        \item \textbf{Case $p \in (0, 1], q = 0$:} $\lim_{q \to 0^+} p \log \frac{p}{q} = \lim_{q \to 0^+} (p \log p - p \log q) = \infty$.
-        \item \textbf{Case $p = 0, q \in (0, 1]$:} $0 \log \frac{0}{q} = 0$.
-        \item \textbf{Case $p = q = 0$:} Case 1 logic yields $\lim_{q \to 0^+} p \log \frac{p}{q} = \infty$ and Case 2 logic yields $0 \log \frac{0}{0} = 0$. 
+        \item Case $p \in (0, 1], q = 0$: $\lim_{q \to 0^+} p \log \frac{p}{q} = \lim_{q \to 0^+} (p \log p - p \log q) = \infty$.
+        \item Case $p = 0, q \in (0, 1]$: $0 \log \frac{0}{q} = 0$.
+        \item Case $p = q = 0$: Case 1 logic yields $\lim_{q \to 0^+} p \log \frac{p}{q} = \infty$ and Case 2 logic yields $0 \log \frac{0}{0} = 0$. 
     \end{enumerate}
     As we want $\sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}}$ to sum over $x \in \mathcal{X}, p(x) > 0$, we choose the convention $0 \log \frac{0}{0} = 0$.
-    Figure \ref{fig:pointwise-rel-entropy} visualizes the the pointwise relative entropy function $(p, q) \mapsto \log \frac{p}{q}$:
-    We can now calculate the relative entropies for an example.
+    Figure \ref{fig:pointwise-rel-entropy} visualizes the the pointwise relative entropy function $(p, q) \mapsto \log \frac{p}{q}$.
+\end{remark}
+
+\begin{example}
+    To understand the concept, we can now calculate the relative entropies for an example.
     Let $X \sim B(20, \alpha)$ and $Y \sim B(20, \beta)$ with $\paren{\alpha, \beta} \in [0, 1]^2$.
     \begin{align*}
-                                 & \quad D(p(x) \| q(x)) = \sum_{x = 0}^{20}{p(x) \log \frac{p(x)}{q(x)}} \\
+                                & \quad D(p(x) \| q(x)) = \sum_{x = 0}^{20}{p(x) \log \frac{p(x)}{q(x)}} \\
         \alpha=0, \beta=1:       & \quad D(p(x) \| q(x)) = 0 \log \frac{0}{1} + 1 \log \frac{1}{0} = 0 + \infty = \infty \\
         \alpha=0.1, \beta=0.9:   & \quad D(p(x) \| q(x)) \approx 50.7 \\
         \alpha=0.3, \beta=0.7:   & \quad D(p(x) \| q(x)) \approx 9.8 \\
@@ -194,57 +204,20 @@ Your abstract.
     \end{align*}
     Figure \ref{fig:rel-entropy-bionm-distrib} visualizes the two discrete distribution functions in the cases above.
     Intuitively, the more overlap the distributions have, the closer to zero the relative entropy is.
-\end{remark}
+\end{example}
+
 
 \newpage
-\subsection{Chain Rules and Mutual Information}
-\begin{remark}
-    The relationship between entropy, conditional entropy and mutual information can be visualized:
-    \begin{center}
-        \includegraphics[width=1.0\linewidth]{../plots/entropy_mutual_info_venn_diagram.pdf}
-    \end{center}
-\end{remark}
-
-\begin{theorem}\label{theorem:chain-rules}
-    Let $n \in \mathbb{N}, n \ge 2$, $(X_1, \cdots, X_n) \sim p(x_1, \cdots, x_n)$.
-    The following statements about Entropy and Mutual Information are called Chain Rules:
-    \begin{enumerate}
-        \item $H(X_1, \cdots, X_n) = \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1)}$
-        \item
-        \item
-    \end{enumerate}
-\end{theorem}
-\begin{proof}
-    \begin{enumerate}
-        \item Prove this result using induction by $n$. \\
-        Base case $n = 2$:
-        \begin{align*}
-            H(X_1, X_2) &= -\mathbb{E}\paren{\log p(X_1, X_2)} \\
-            &= -\mathbb{E}\paren{\log p(X_2 \mid X_1)p(X_1)} \\
-            &= -\mathbb{E}\paren{\log p(X_2 \mid X_1)} + -\mathbb{E}\paren{\log p(X_1)} \\
-            &= H(X_1) + H(X_2 \mid X_1)
-        \end{align*}
-        Assume the theorem holds for $n - 1$. Induction case $n - 1$ to $n$:
-        \begin{align*}
-            H(X_1, \cdots, H_n) &= H(X_n | X_1, \cdots, H_{n-1}) + H(X_1, \cdots, H_{n-1})          && \text{(apply base case)} \\
-            &= H(X_n | X_1, \cdots, H_{n-1}) + \sum_{i=1}^{n-1}{H(X_i \mid X_{i-1}, \cdots, X_1)}   && \text{(induction hypothesis)}
-        \end{align*}
-    \end{enumerate}
-\end{proof}
-
-\begin{corollary}
-    We can specialize the Chain Rule for Entropy and Mutual Information to two variables:
-    \begin{enumerate}
-        \item $H(X, Y) = H(X) + H(Y \mid X)$
-        \item $I(X; Y) = $
-    \end{enumerate}
-\end{corollary}
-\begin{proof}
-    Follows from Theorem~\ref{theorem:chain-rules}.
-\end{proof}
+\subsection{Mutual Information and Chain Rules}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1.0\linewidth]{../plots/entropy_mutual_info_venn_diagram.pdf}
+    \caption{Relationship between Entropy, Conditional Entropy and Mutual Information}
+    \label{fig:relationships-entropy-mutual-information}
+\end{figure}
 
 \begin{theorem}
-    There are multiple equivalent ways to express Mutual Information:
+    There are multiple equivalent ways to express Mutual Information (see Figure \ref{fig:relationships-entropy-mutual-information}):
     \begin{enumerate}
         \item $I(X; Y) = H(Y) - H(Y | X)$
         \item $I(X; Y) = I(Y; X)$
@@ -282,6 +255,82 @@ Your abstract.
     \end{enumerate}
 \end{proof}
 
+\newpage
+\begin{definition}\label{def:entropy-mutual-info-def}
+    \begin{align*}
+    \intertext{\noindent Let $p$ and $q$ be a joint probability mass function on $\mathcal{X} \times \mathcal{Y}$.}
+        % TODO:
+        \textbf{Conditional Relative Entropy:}    & \quad D(p(x \mid y) \| q(x \mid y)) = \mathbb{E}_{(X, Y) \sim p(x, y)}\paren{\log \frac{p(X \mid Y)}{q(X \mid Y)}} \\
+        % TODO:
+        \textbf{Conditional Mutual Information:}  & \quad I(X; Y \mid Z) = H(X \mid Z) - H(X \mid Y, Z)
+    \end{align*}
+\end{definition}
+
+\begin{example}
+    To understand the concept, we can now calculate the conditional relative entropies for an example.
+\end{example}
+
+\begin{example}
+    To understand the concept, we can now calculate the conditional relative entropies for an example.
+\end{example}
+
+
+\newpage
+\begin{theorem}\label{theorem:chain-rules}
+    Let $n \in \mathbb{N}, n \ge 2$, $(X_1, \cdots, X_n) \sim p(x_1, \cdots, x_n)$.
+    The following statements about Entropy and Mutual Information are called Chain Rules:
+    \begin{enumerate}
+        \item $H(X_1, \cdots, X_n) = \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1)}$
+        \item $D(p(x) \| q(x)) = D(p(x \mid y) \| q(x \mid y)) + D(p(y) \| q(y))$
+        \item $I()$
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    \begin{enumerate}
+        \item 
+            Prove this result using induction by $n$. \\
+            Base case $n = 2$:
+            \begin{align*}
+                H(X_1, X_2) &= -\mathbb{E}\paren{\log p(X_1, X_2)} \\
+                &= -\mathbb{E}\paren{\log p(X_2 \mid X_1)p(X_1)} \\
+                &= -\mathbb{E}\paren{\log p(X_2 \mid X_1)} + -\mathbb{E}\paren{\log p(X_1)} \\
+                &= H(X_1) + H(X_2 \mid X_1)
+            \end{align*}
+            Assume the theorem holds for $n - 1$. Induction case $n - 1$ to $n$:
+            \begin{align*}
+                H(X_1, \cdots, H_n) &= H(X_n | X_1, \cdots, H_{n-1}) + H(X_1, \cdots, H_{n-1})          && \text{(apply base case)} \\
+                &= H(X_n | X_1, \cdots, H_{n-1}) + \sum_{i=1}^{n-1}{H(X_i \mid X_{i-1}, \cdots, X_1)}   && \text{(induction hypothesis)}
+            \end{align*}
+
+        \item
+            \begin{align*}
+                D(p(x) \| q(x)) &= \sum_{(x, y) \injoint}{p(x, y) \frac{p(x)}{q(x)}}
+                = \sum_{(x, y) \injoint}{p(x, y) \frac{p(x)}{q(x)}}
+                = \sum_{(x, y) \injoint}{p(x, y) \frac{p(x \mid y)p(y)}{q(x \mid y)p(y)}} \\
+                &= \sum_{(x, y) \injoint}{p(x, y) \frac{p(x \mid y)}{q(x \mid y)}} + \sum_{(x, y) \injoint}{p(x, y) \frac{p(y)}{p(y)}} \\
+                &= D(p(x \mid y) \| q(x \mid y)) + D(p(y) \| q(y))
+            \end{align*}
+        
+        \item
+            TODO
+    \end{enumerate}
+\end{proof}
+
+% TODO: Definition of relative entropy correctly uses E_p everywhere instead of E.
+
+\begin{corollary}
+    The following specialization of the Chain Rules for Entropy and Mutual Information is commonly used:
+    \begin{enumerate}
+        \item $H(X, Y) = H(X) + H(Y \mid X)$
+        \item $D(p \| q) = D()$
+        \item $I(X; Y) = $
+    \end{enumerate}
+\end{corollary}
+\begin{proof}
+    Follows from Theorem~\ref{theorem:chain-rules}.
+\end{proof}
+
+
 
 \newpage
 \section{Inequalities for Entropy and Mutual Information}
@@ -304,8 +353,8 @@ Your abstract.
 \begin{proof}
     \begin{enumerate}
         \item
-            % Let $n \in \mathbb{N}, n \gt 2$ and $p_1, \cdots, p_n \in $ and $x_1, \cdots, x_n$.
-            Distinguish two cases. If $\mathcal{X}$ is finite: \\
+            Let $n \in \mathbb{N} \\ \{1\}$ and $p_1, \cdots, p_n \in (0, 1)$ such that $\sum_{i=1}^{n}{p_i} = 1$ and $x_1, \cdots, x_n \in \mathbb{R}$.
+            Distinguish two cases. If $\mathcal{X}$ is finite:
             We show $f\paren{\sum_{i=1}^{n}{p_i x_i}} \le \sum_{i=1}^{n}{p_i f(x_i)}$ by induction. \\
             The definition of convexity yields the base case $i = 2$: $f(p_1 x_1 + p_2 x_2) \le p_1 f(x_1) + p_2 f(x_2)$. \\
             We assume the claim holds for $n - 1$ and the induction case goes as follows: \\
@@ -396,11 +445,10 @@ Your abstract.
             $H(Y \mid X) = 0 \implies \exists f\vcentcolon Y = f(X) \; \text{almost surely}$
         \item If independent noise is added to a random variable, entropy can only increase: \\
             Set $Z = X + Y$. Then we have $X, Y \text{independent} \implies H(X) \le H(Z) \land H(Y) \le H(Z)$
+        \item TODO: Maybe add independence bound?
     \end{enumerate}
 \end{theorem}
 \begin{proof}
-    \newcommand{\injoint}{\in \mathcal{X} \times \mathcal{Y}}
-
     \begin{enumerate}
         \item $0 \le I(X; Y) = H(X) - H(X \mid Y) \iff H(X \mid Y) \le H(X)$
         \item
@@ -456,7 +504,7 @@ Your abstract.
 % TODO: Add deep learning example.
 
 \newpage
-\subsection{The Information Inequality}
+\subsection{The Log-Sum Inequality}
 %         \item $p \mapsto H(p)$ is concave.
 
 Hello

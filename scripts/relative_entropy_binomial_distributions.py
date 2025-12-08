@@ -13,7 +13,7 @@ def main():
         (0.5, 0.5),
     ]
     supp_size = 20
-    fig, axs = plt.subplots(2, len(subplots) // 2, figsize = (len(subplots), len(subplots)), tight_layout=True)
+    fig, axs = plt.subplots(2, len(subplots) // 2, figsize = (8, 4), tight_layout=True)
 
     def set_ax_settings(ax, title):
         ax.set_title(title)

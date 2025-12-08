@@ -4,7 +4,7 @@ import numpy as np
 def main():
     plt.rcParams['text.usetex'] = True
 
-    eps = 10e-2
+    eps = 10e-3
     p = np.linspace(eps, 1, num=64)
     H = np.zeros_like(p)
     non_zero = p < 1

@@ -7,7 +7,7 @@ def main():
     plt.rcParams['text.usetex'] = True
 
     num = 1024
-    eps = 0.03
+    eps = 0.05
     max_value = 10.0
     x = np.linspace(0, 1, num=num)
     y = np.linspace(0, 1, num=num)
@@ -27,8 +27,9 @@ def main():
     Z[case3] = 0.0
 
 
-    fig = plt.figure(figsize=(8, 8), tight_layout=True)
+    fig = plt.figure(figsize=(8, 4), tight_layout=True)
     ax = fig.add_subplot(111, projection='3d')
+    plt.subplots_adjust(right=0.5) 
 
     C = np.zeros((num, num, 4))
     C[:] = [0.0, 0.0, 1.0, 0.3]
@@ -57,9 +58,11 @@ def main():
     ]
     ax.legend(
         handles=[handle[0] for handle in handles],
-        loc='center right',
-        fontsize=24
+        loc='center left',
+        bbox_to_anchor=(1.2, 0.5),
+        fontsize=24,
     )
+
     fig.savefig("../plots/pointwise_rel_entropy_continuation.pdf")
 
 if __name__ == "__main__":
