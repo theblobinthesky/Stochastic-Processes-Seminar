@@ -260,18 +260,20 @@
     \begin{align*}
     \intertext{\noindent Let $p$ and $q$ be a joint probability mass function on $\mathcal{X} \times \mathcal{Y}$.}
         % TODO:
-        \textbf{Conditional Relative Entropy:}    & \quad D(p(x \mid y) \| q(x \mid y)) = \mathbb{E}_{(X, Y) \sim p(x, y)}\paren{\log \frac{p(X \mid Y)}{q(X \mid Y)}} \\
+        \textbf{Conditional Relative Entropy:}    & \quad D(p_{Y \mid X} \| q_{Y \mid X}) 
+        = \mathbb{E}_{X \sim p_X}\paren{\log \frac{P[y \mid x]}{q(y \mid x]}} 
+        = \mathbb{E}_{(X, Y) \sim p(x, y)}\paren{\log \frac{p(X \mid Y)}{q(X \mid Y)}} \\
         % TODO:
         \textbf{Conditional Mutual Information:}  & \quad I(X; Y \mid Z) = H(X \mid Z) - H(X \mid Y, Z)
     \end{align*}
 \end{definition}
 
 \begin{example}
-    To understand the concept, we can now calculate the conditional relative entropies for an example.
+    To understand the concept, we can now calculate the Conditional Relative Entropies for an example.
 \end{example}
 
 \begin{example}
-    To understand the concept, we can now calculate the conditional relative entropies for an example.
+    To understand the concept, we can now calculate the Conditional Mutual Information for an example.
 \end{example}
 
 

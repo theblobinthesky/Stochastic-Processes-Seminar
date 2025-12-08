@@ -7,5 +7,7 @@
 *blx.bib
 *.bbl
 *.blg
+*.snm
+*.nav
 __pycache__
 venv

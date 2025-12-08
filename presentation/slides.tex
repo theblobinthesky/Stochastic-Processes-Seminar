@@ -1,0 +1,137 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{caption}[numbered]
+
+\usepackage[english]{babel}
+\usepackage{amsmath, amsfonts, amsthm, mathtools}
+\usepackage{dsfont}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+% Mirrors notation from writeup/root_document.tex so slides match the paper.
+\newcommand{\defeq}{\vcentcolon=}
+\newcommand{\eqdef}{=\vcentcolon}
+\newcommand{\paren}[1]{\left(#1\right)}
+\DeclareMathOperator{\supp}{supp}
+\newcommand{\injoint}{\in \mathcal{X} \times \mathcal{Y}}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\title{Entropy and Relative Entropy}
+\subtitle{Stochastic Processes Seminar}
+\author{Erik Stern}
+\date{\today}
+
+\AtBeginSection[]{
+    \begin{frame}{Roadmap}
+        \tableofcontents[currentsection]
+    \end{frame}
+}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Agenda}
+    \tableofcontents
+\end{frame}
+
+\section{Entropy Basics}
+
+\begin{frame}{Definitions aligned with the paper}
+    \begin{definition}[Shannon Entropy]
+        Let $X$ be a discrete random variable over $\mathcal{X}$ with pmf $p$. The entropy is
+        $H(X) \defeq -\sum_{x \in \supp(X)} p(x) \log_2 p(x)$.
+    \end{definition}
+    \pause
+    \begin{definition}[Mutual Information]
+        For jointly distributed $X$ and $Y$, define $I(X; Y) \defeq D(p_{(X, Y)} \| p_X p_Y)$.
+    \end{definition}
+\end{frame}
+
+\begin{frame}{Entropy of a weighted coin}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\linewidth]{../plots/entropy\_weighted\_coin.pdf}
+        \caption{Re-use figures generated via \texttt{python scripts/entropy\_weighted\_coin.py}.}
+    \end{figure}
+\end{frame}
+
+\section{Inequalities}
+
+\begin{frame}{Concavity of entropy}
+    \begin{theorem}[Concavity]
+        For any discrete pmf $p$, the function $p \mapsto H(p)$ is concave, i.e.
+        $H(\lambda p + (1-\lambda) q) \ge \lambda H(p) + (1-\lambda) H(q)$ for $\lambda \in [0, 1]$.
+    \end{theorem}
+    \begin{proof}[Idea]
+        Apply Jensen's Inequality to the convex function $x \mapsto -x \log x$ as detailed in the writeup.
+    \end{proof}
+\end{frame}
+
+\section{Relative Entropy}
+
+\begin{frame}{KL-divergence conventions}
+    \begin{definition}[Relative Entropy]
+        Let $p$ and $q$ be pmfs on $\mathcal{Z}$. Define $D(p \| q) \defeq \sum_{z \in \mathcal{Z}} p(z) \log \frac{p(z)}{q(z)}$
+        with the entropy conventions (e.g., $0 \log 0 = 0$) from the paper.
+    \end{definition}
+    \begin{itemize}
+        \item This matches the mutual-information definition recorded in \texttt{writeup/root\_document.tex}.
+        \item Summarize the limit-case conventions from the accompanying remark in the writeup as speaker notes.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Pointwise relative entropy}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\linewidth]{../plots/pointwise_rel_entropy_continuation.pdf}
+        \caption{Visualise $(p, q) \mapsto \log \frac{p}{q}$ to connect plots with theory.}
+    \end{figure}
+\end{frame}
+
+\section{Numerics}
+
+\begin{frame}{Simulation hook}
+    \begin{block}{How to regenerate figures}
+        \begin{itemize}
+            \item Run \texttt{python scripts/recreate\_all.py} to rebuild every PDF in \texttt{plots/}.
+            \item Target a single experiment via \texttt{python scripts/relative\_entropy\_binomial\_distributions.py}.
+            \item Keep data-free slides by sourcing images from \texttt{../plots/*.pdf} only.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Backup content}
+    \begin{example}
+        Let $X_p \sim G(p)$ denote the Geometric r.v. discussed in the paper. Compare $H(X_p)$ to the Bernoulli example using the geometric entropy figure showcased in the writeup.
+    \end{example}
+    \begin{remark}
+        Store any extra derivations in appendix frames guarded by \texttt{\textbackslash appendix} to keep the talk tight.
+    \end{remark}
+\end{frame}
+
+\section{Wrap-up}
+
+\begin{frame}{References}
+    \begin{thebibliography}{99}
+        \bibitem{cover-thomas} T.~Cover and J.~Thomas, \emph{Elements of Information Theory}, Wiley, 2006.
+        \bibitem{seminar-notes} Seminar notes in \texttt{writeup/root\_document.tex} provide full proofs.
+    \end{thebibliography}
+\end{frame}
+
+\begin{frame}{Next steps}
+    \begin{itemize}
+        \item Sync new macros with the writeup before adding fresh content.
+        \item Rebuild the slide deck via \texttt{bash presentation/compile\_latex.sh}.
+        \item Drop PDFs into \texttt{output/} for distribution.
+    \end{itemize}
+\end{frame}
+
+\end{document}
