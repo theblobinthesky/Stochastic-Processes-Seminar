@@ -169,7 +169,7 @@
         \textbf{Joint Entropy:}       & \quad H(X, Y) = -\mathbb{E}\paren{\log p_{(X, Y)}(X, Y)}
     \intertext{\noindent Let $p$ and $q$ be two probability mass functions on the same set $\mathcal{Z}$. We define the following:}
         \textbf{Relative Entropy:}    & \quad D(p \| q) = \mathbb{E}_{X \sim p}\paren{\log \frac{p(X)}{q(X)}} 
-            \quad \text{with conventions from Remark \ref{remark:relative-entropy-conventions}}
+            \, \text{with conventions from Remark \ref{remark:relative-entropy-conventions}}
     \intertext{(Sometimes also called KL-Divergence)}
     \intertext{\noindent Using Relative Entropy, we can define the Mutual Information between the variables $X, Y$:}
         \textbf{Mutual Information:}  & \quad I(X; Y) = D(p_{(X, Y)} \| p_X \, p_Y) \\
@@ -177,10 +177,10 @@
 \end{definition}
 
 \begin{remark} \label{remark:relative-entropy-conventions}
-    We defined have
+    We have
     \begin{align*}
-        D(p(x) \| q(x)) &= \mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}}                   && \text{(def.~of relative entropy)} \\
-                        &= \sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}}        && \text{(def.~of expected value)}
+        D(p \| q)   &= \mathbb{E}_{X ~ p}\paren{\log \frac{p(X)}{q(X)}}             && \text{(def.~of relative entropy)} \\
+                    &= \sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}}        && \text{(def.~of expected value)}
     \end{align*}
     To understand the conventions, we can look at the limit cases:
     \begin{enumerate}
@@ -196,11 +196,11 @@
     To understand the concept, we can now calculate the relative entropies for an example.
     Let $X \sim B(20, \alpha)$ and $Y \sim B(20, \beta)$ with $\paren{\alpha, \beta} \in [0, 1]^2$.
     \begin{align*}
-                                & \quad D(p(x) \| q(x)) = \sum_{x = 0}^{20}{p(x) \log \frac{p(x)}{q(x)}} \\
-        \alpha=0, \beta=1:       & \quad D(p(x) \| q(x)) = 0 \log \frac{0}{1} + 1 \log \frac{1}{0} = 0 + \infty = \infty \\
-        \alpha=0.1, \beta=0.9:   & \quad D(p(x) \| q(x)) \approx 50.7 \\
-        \alpha=0.3, \beta=0.7:   & \quad D(p(x) \| q(x)) \approx 9.8 \\
-        \alpha= 0.5, \beta= 0.5: & \quad D(p(x) \| q(x)) = \sum_{x = 0}^{20}{p(x) \log 1} = 0 \\
+                                 & \quad D(p_X \| p_Y) = \sum_{x = 0}^{20}{p_X(x) \log \frac{p_X(x)}{p_Y(x)}} \\
+        \alpha=0, \beta=1:       & \quad D(p_X \| p_Y) = 0 \log \frac{0}{1} + 1 \log \frac{1}{0} = 0 + \infty = \infty \\
+        \alpha=0.1, \beta=0.9:   & \quad D(p_X \| p_Y) \approx 50.7 \\
+        \alpha=0.3, \beta=0.7:   & \quad D(p_X \| p_Y) \approx 9.8 \\
+        \alpha= 0.5, \beta= 0.5: & \quad D(p_X \| p_Y) = \sum_{x = 0}^{20}{p(x) \log 1} = 0 \\
     \end{align*}
     Figure \ref{fig:rel-entropy-bionm-distrib} visualizes the two discrete distribution functions in the cases above.
     Intuitively, the more overlap the distributions have, the closer to zero the relative entropy is.
@@ -257,34 +257,77 @@
 
 \newpage
 \begin{definition}\label{def:entropy-mutual-info-def}
+    Let $p$ and $q$ be probability mass functions on $\mathcal{X} \times \mathcal{Y}$.
     \begin{align*}
-    \intertext{\noindent Let $p$ and $q$ be a joint probability mass function on $\mathcal{X} \times \mathcal{Y}$.}
-        % TODO:
-        \textbf{Conditional Relative Entropy:}    & \quad D(p_{Y \mid X} \| q_{Y \mid X}) 
-        = \mathbb{E}_{X \sim p_X}\paren{\log \frac{P[y \mid x]}{q(y \mid x]}} 
-        = \mathbb{E}_{(X, Y) \sim p(x, y)}\paren{\log \frac{p(X \mid Y)}{q(X \mid Y)}} \\
-        % TODO:
-        \textbf{Conditional Mutual Information:}  & \quad I(X; Y \mid Z) = H(X \mid Z) - H(X \mid Y, Z)
+    \intertext{\noindent We define the following:}
+        \textbf{Conditional Relative Entropy:}    & \quad D(p_{Y \mid X} \| q_{Y \mid X}) \\
+        &= \mathbb{E}_{X \sim p_X} D(p(Y \mid X) \| q(Y \mid X)) \\
+        &= \sum_{x \in \mathcal{X}}{p(x) D(p(y \mid x) \| q(y \mid x))} \\
+        &= \mathbb{E}_{(X, Y) \sim p(x, y)}\paren{\log \frac{p(Y \mid X)}{q(Y \mid X)}} \\
+        &= \sum_{(x, y) \injoint}{p(x, y) \log \frac{p(y \mid x)}{q(y \mid x)}} \\
+        \textbf{Conditional Mutual Information:}  & \quad I(X; Y \mid Z) 
+        = H(X \mid Z) - H(X \mid Y, Z)
     \end{align*}
 \end{definition}
 
 \begin{example}
-    To understand the concept, we can now calculate the Conditional Relative Entropies for an example.
+    The Conditional Relative Entropy can be illustrated using a Christmas example: \\
+    Let $\Omega = \{1, \cdots, 12\}$, $\mathds{P}$ uniformly distributed, \\
+    $\mathcal{X} = \{\textbf{JANUARY}, \cdots, \textbf{DECEMBER}\}$ and
+    $\mathcal{Y} = \{0, 1\}$. \\
+    Our variable $X$ gives us the month of the year: \\
+    We define it as $X: \Omega \rightarrow \mathcal{X}, \omega \mapsto \textbf{the corresponding month}$. \\
+    Our variable $Y$ answers the question "Is Christmas Advent?": \\
+    We define it as $Y: \Omega \rightarrow \mathcal{Y}, \omega \mapsto \mathds{1}_{\{\textbf{NOVEMBER}, \textbf{DECEMBER}\}}(\omega)$. \\
+    We have lived on earth our entire lives. Our model of reality $p$ is correct! \\
+    We define it as
+    $$
+        p(Y = 1 \mid x) = \begin{cases}
+			1, & \text{if $x \in \{\textbf{NOVEMBER}, \textbf{DECEMBER}\}$} \\
+            0, & \text{otherwise}
+		\end{cases}
+    $$
+    The alien \textit{ET} visits earth. He sees the Christmas trees in January and assumes Advent continues into January.
+    In November and December, he is uncertain too. His model of reality $q$ is not correct! \\
+    We define it as 
+    $$
+        q(Y = 1 \mid x) = \begin{cases}
+			0.5, & \text{if $x \in \{\textbf{NOVEMBER}, \textbf{DECEMBER}, \textbf{JANUARY}\}$} \\
+            0, & \text{otherwise}
+		\end{cases}
+    $$
+    Let us calculate the individual relative entropies:
+    \begin{enumerate}
+        \item $D(p(y \mid \textbf{NOV.}) \| q(y \mid \textbf{NOV.})) = 0 + 1 \log \frac{1}{0.5} = 1$
+        \item $D(p(y \mid \textbf{DEC.}) \| q(y \mid \textbf{DEC.})) = 0 + 1 \log \frac{1}{0.5} = 1$
+        \item $D(p(y \mid \textbf{JAN.}) \| q(y \mid \textbf{JAN.})) = 1 \log \frac{1}{0.5} + 0 = 1$
+        \item Otherwise: $D(p(y \mid x) \| q(y \mid x)) = 0$
+    \end{enumerate}
+    We can now calculate the Conditional Relative Entropy:
+    \begin{align*}
+        D(p_{Y \mid X} \| q_{Y \mid X}) &= \sum_{x \in \mathcal{X}}{p_X(x) D(p(y \mid x) \| q(y \mid x))} \\
+        &= \frac{1}{12} \paren{1 + 1 + 1} = \frac{3}{12} = 0.25
+    \end{align*}
+    So the expression calculates how much of an error \textit{ET} makes per month, on average.
 \end{example}
 
-\begin{example}
-    To understand the concept, we can now calculate the Conditional Mutual Information for an example.
-\end{example}
+% TODO: Idk if this example is useful. Let's see.
+% \begin{example}
+%     To understand the concept, we can now calculate the Conditional Mutual Information for an example.
+%     % TODO: Fill in this vertical.
+% \end{example}
 
 
 \newpage
+% TODO: Explain all of these notations first.
+
 \begin{theorem}\label{theorem:chain-rules}
-    Let $n \in \mathbb{N}, n \ge 2$, $(X_1, \cdots, X_n) \sim p(x_1, \cdots, x_n)$.
+    Let $n \in \mathbb{N}, n \ge 2$, $(X_1, \cdots, X_n) \sim p(x_1, \cdots, x_n)$ and $Y$ a random variable.
     The following statements about Entropy and Mutual Information are called Chain Rules:
     \begin{enumerate}
         \item $H(X_1, \cdots, X_n) = \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1)}$
         \item $D(p(x) \| q(x)) = D(p(x \mid y) \| q(x \mid y)) + D(p(y) \| q(y))$
-        \item $I()$
+        \item $I(X_1, \cdots, X_n; Y) = \sum_{i=1}^{n}{I(X_i; Y \mid X_{i-1}, \cdots, X_1)}$
     \end{enumerate}
 \end{theorem}
 \begin{proof}
@@ -314,19 +357,19 @@
             \end{align*}
         
         \item
-            TODO
+            \begin{align*}
+                I(X_1, \cdots, X_n; Y) &= H(X_1, \cdots, X_n) - H(X_1, \cdots, X_n \mid Y) \\
+                &= \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1)} + \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1, Y)} \\
+                &= \sum_{i=1}^{n}{I(X_i; Y \mid X_{i-1}, \cdots, X_1)}
+            \end{align*}
+
     \end{enumerate}
 \end{proof}
 
 % TODO: Definition of relative entropy correctly uses E_p everywhere instead of E.
 
 \begin{corollary}
-    The following specialization of the Chain Rules for Entropy and Mutual Information is commonly used:
-    \begin{enumerate}
-        \item $H(X, Y) = H(X) + H(Y \mid X)$
-        \item $D(p \| q) = D()$
-        \item $I(X; Y) = $
-    \end{enumerate}
+    The following specialization of the Chain Rule for Entropy is commonly used: $H(X, Y) = H(X) + H(Y \mid X)$
 \end{corollary}
 \begin{proof}
     Follows from Theorem~\ref{theorem:chain-rules}.
@@ -355,7 +398,7 @@
 \begin{proof}
     \begin{enumerate}
         \item
-            Let $n \in \mathbb{N} \\ \{1\}$ and $p_1, \cdots, p_n \in (0, 1)$ such that $\sum_{i=1}^{n}{p_i} = 1$ and $x_1, \cdots, x_n \in \mathbb{R}$.
+            Let $n \in \mathbb{N} \setminus \{1\}$ and $p_1, \cdots, p_n \in (0, 1)$ such that $\sum_{i=1}^{n}{p_i} = 1$ and $x_1, \cdots, x_n \in \mathbb{R}$.
             Distinguish two cases. If $\mathcal{X}$ is finite:
             We show $f\paren{\sum_{i=1}^{n}{p_i x_i}} \le \sum_{i=1}^{n}{p_i f(x_i)}$ by induction. \\
             The definition of convexity yields the base case $i = 2$: $f(p_1 x_1 + p_2 x_2) \le p_1 f(x_1) + p_2 f(x_2)$. \\
@@ -401,7 +444,7 @@
                 = \log\paren{\mathbb{E}_p \frac{q(X)}{p(X)}}                            && \text{(-log is convex, property of log)}     \\
                 &= \log\paren{\sum_{x \in \mathcal{X}}{p(x) \frac{q(x)}{p(x)}}}         
                 = \log\paren{\sum_{x \in \mathcal{X}}{q(x)}}                            && \text{(def. of exp. value, simplify expr.)}  \\
-                &= \log\paren{1} = 0                                                    && \text{(q is a prob. function)}               \\
+                &= \log\paren{1} = 0                                                    && \text{(q is a prob. function)}
             \end{align*}
             So equivalently, we have $D(p(x) \| q(x)) \ge 0$.
         \item Follows from part 1: $I(X; Y) = D(p(x, y) \| p(x)p(y)) \ge 0$.
@@ -432,7 +475,7 @@
             Let $X \sim U(\{1, 2, 3, 4\})$ be the original signal, $N \sim B(3, 0.5)$ the noise and let $X, N$ be independent. 
             Then $S \defeq X + N$ is a noisy signal. \\
 
-            We can compute the crirical variance $a$.
+            We can compute the critical variance $a$.
             % TODO
     \end{enumerate}
 \end{remark}
@@ -453,6 +496,7 @@
 \begin{proof}
     \begin{enumerate}
         \item $0 \le I(X; Y) = H(X) - H(X \mid Y) \iff H(X \mid Y) \le H(X)$
+
         \item
             Let $Y \sim U(\mathcal{X})$ st. $\forall x \in \mathcal{X}\vcentcolon q(x)=\frac{1}{|\mathcal{X}|}$.
             \begin{align*}
@@ -460,11 +504,20 @@
                 = \mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}}
                 = \sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}} \\
                 &= \sum_{x \in \mathcal{X}}{p(x) \log\paren{p(x)|\mathcal{X}|}}
-                = \sum_{x \in \mathcal{X}}{p(x) \log p(x)} + |\mathcal{X}| \sum_{x \in \mathcal{X}}{p(x)}\\
-                &= -H(X) + |\mathcal{X}| = |\mathcal{X}| - H(X)
+                = \sum_{x \in \mathcal{X}}{p(x) \log p(x)} + \log |\mathcal{X}| \sum_{x \in \mathcal{X}}{p(x)}\\
+                &= -H(X) + \log |\mathcal{X}| = \log |\mathcal{X}| - H(X)
             \end{align*}
             This is equivalent to $H(X) \le \log |\mathcal{X}|$.
-            TODO: Iff part.
+            Lastly, show that $H(X) = \log |\mathcal{X}| \iff X \sim U(\mathcal{X})$. \\
+            $"\Leftarrow":$ This follows from the calculation above. \\
+            $"\Rightarrow":$
+            \begin{align*}
+                \log |\mathcal{X}| = -\sum_{x \in \mathcal{X}}{p(x) \log q(x)}
+                \iff \log\frac{1}{|\mathcal{X}|} = \sum_{x \in \mathcal{X}}{p(x) \log q(x)} \\
+                \iff \sum_{x \in \mathcal{X}}{p(x) \log\frac{1}{|\mathcal{X}|}} = \sum_{x \in \mathcal{X}}{p(x) \log q(x)} \\
+                % TODO
+            \end{align*}
+
         \item
             We have $H(Y \mid X) = -\mathbb{E}\paren{\log p(Y \mid X)} = \sum_{(x, y) \injoint}{-p(x, y) \log p(y \mid x)}$. \\
             Additionally, we have $\forall (x, y) \in \mathcal{X} \times \mathcal{Y}: -p(x, y) \log p(y \mid x) \ge 0$. \\
@@ -480,6 +533,7 @@
             Define $(y_x)_{x \in \mathcal{X}}$ such that $\forall x \in \mathcal{X}: p(x, y_x) > 0$. \\
             Set $f: A \rightarrow \mathcal{Y}, x \mapsto y_x$. This gets us $Im f = \{y_x: x \in \mathcal{X}\} = \{y \in \mathcal{Y}: p(x, y) > 0\}$. \\
             So $Y = f(X) \; \text{almost surely}$.
+
         \item
             We have
             \begin{align*}
@@ -494,6 +548,7 @@
 
             $H(Y, X) = H(X) + H(Y \mid X)$
             Using the Chain rule, we get $H(X, Y) = H(Y \mid X) + H(X)$
+
     \end{enumerate}
 \end{proof}
 
