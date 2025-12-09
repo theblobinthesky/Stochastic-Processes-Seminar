@@ -17,8 +17,6 @@ def main():
 
     def set_ax_settings(ax, title):
         ax.set_title(title)
-        # ax.set_xticklabels([]) 
-        # ax.set_yticklabels([])
         ax.grid(True, alpha=0.3)
     
     def plot_bars(lam, color):

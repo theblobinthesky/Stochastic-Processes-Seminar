@@ -11,3 +11,5 @@
 *.nav
 __pycache__
 venv
+data
+.ruff_cache

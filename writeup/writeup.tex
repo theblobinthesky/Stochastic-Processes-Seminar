@@ -18,6 +18,8 @@
 \newcommand{\eqdef}{=\vcentcolon}
 \newcommand{\paren}[1]{\left(#1\right)}
 \DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\CrossEntropy}{CrossEntropy}
 \newcommand{\injoint}{\in \mathcal{X} \times \mathcal{Y}}
 
 \theoremstyle{plain}
@@ -32,12 +34,12 @@
 \begin{document}
 \maketitle
 
-% TODO: Clean this up.
 \begin{abstract}
-    This seminar paper provides a foundational overview of Information Theory, focusing on the mathematical properties of Shannon Entropy and Mutual Information. 
-    We establish key definitions and rigorously prove fundamental inequalities, including the non-negativity of entropy and the Data Processing Inequality, 
-    using Jensen's Inequality. To build intuition, theoretical results are complemented by numerical simulations of Bernoulli and Geometric random variables. 
-    Finally, we introduce Relative Entropy (KL-Divergence) and discuss its geometric properties and applications in optimization.
+    This seminar paper provides a foundational overview of Information Theory, focusing on Entropy, Mutual Information, and Relative Entropy. 
+    We establish key definitions and prove fundamental inequalities, using Jensen's Inequality and the Log-Sum Inequality. 
+    To build intuition, theoretical results are complemented by numerical simulations of discrete random variables. 
+    Finally, we derive the relationship between Relative Entropy and Cross-Entropy, 
+    demonstrating their practical application in optimizing neural networks for the MNIST digit classification task.
 \end{abstract}
 
 \tableofcontents
@@ -46,11 +48,11 @@
 \subsection{Definitions and Conventions}
 
 \begin{definition}
-    Let $(\Omega, \mathcal{A}, \mathds{P})$ be a probability space, $\mathcal{X}$ be countable sets and
-    $X: \Omega \rightarrow \mathcal{X}$ be a discrete random variable on $(\Omega, \mathcal{A}, \mathds{P})$.
+    Let $(\Omega, \mathcal{A}, \mathds{P})$ be a probability space, let $\mathcal{X}$ be a countable set and
+    let $X: \Omega \rightarrow \mathcal{X}$ be a discrete random variable on $(\Omega, \mathcal{A}, \mathds{P})$.
     We can then define
     \begin{align*}
-        \textbf{Entropy wrt. base:}       &\quad H_q(X) = \mathbb{E}\paren{-\log_q p(X)} = -\sum_{x \in \supp(X)}{p(x) \log_q p(x)} \\
+        \textbf{Entropy wrt. base:}       &\quad H_b(X) = \mathbb{E}\paren{-\log_b p_X(X)} = -\sum_{x \in \supp(X)}{p_X(x) \log_b p_X(x)} \\
         \textbf{Entropy conventionally:}  &\quad H(X) = H_2(X)
     \end{align*}
 \end{definition}
@@ -65,10 +67,6 @@
     \item
         We do \textbf{not} use the shorthand notations $p(x) = \mathds{P}[X = x]$ and $p(y) = \mathds{P}[Y = y]$
         from \cite{Thomas:ElementsOfInformationTheory}, to keep the notation easily understandable.
-
-    \item
-        Currently, $\mathcal{X}, \mathcal{Y} \subset \mathbb{R}$ is not required.  
-        Later theorems like Jensens Inequality do require real-valued random variables.
 
     \item We use the convention $\log = \log_2$, as the entropy $H$ is defined wrt. base $2$.
 
@@ -86,10 +84,10 @@
     \end{enumerate}
 \end{remark}
 
-\begin{remark}
-    Note that if $|\mathcal{X}|$ is finite, $(\forall p \in \mathbb{R}_+: H_p(X) \; \text{finite})$
+\begin{remark}[Existence of Entropy]
+    Note that if $|\mathcal{X}|$ is finite, $(\forall p \in \mathbb{R}_+: H_b(X) \; \text{finite})$
     and $H(X) \le |\mathcal{X}|$ (see Theorem \ref{theorem:more-entropy-observations}).
-    For $|\mathcal{X}|$ countably infinite, there are counterexamples where $H_p(X) = \infty$ (see \cite{MathStackexchange:CanEntropyBeInfinite}).
+    For $|\mathcal{X}|$ countably infinite, there are counterexamples where $H_b(X) = \infty$ (see \cite{MathStackexchange:CanEntropyBeInfinite}).
     From now on, we will assume that entropy is finite.
 \end{remark}
 
@@ -98,27 +96,27 @@
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=0.8\linewidth]{../plots/entropy_weighted_coin.pdf}
+        \includegraphics[width=1.0\linewidth]{../plots/entropy_weighted_coin.pdf}
         \caption{Bernoulli Rand. Variable Entropy $H(X_p)$}
         \label{fig:bernoulli-entropy}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=0.8\linewidth]{../plots/entropy_geo_variable.pdf}
+        \includegraphics[width=1.0\linewidth]{../plots/entropy_geo_variable.pdf}
         \caption{Geometric Rand. Variable Entropy $H(X_p)$}
         \label{fig:geometric-entropy}
     \end{subfigure}
 \end{figure}
 
-\begin{example}
+\begin{example}[Entropy of bernoulli variable]
     Let $p \in (0, 1)$ and $X_p \sim B(1, p)$ be a weighted coin flip. \\
     We can calculate the Entropy of $X_p$: $H(X_p) = -p \log p - (1-p) \log (1-p)$. \\
-    A visual inspection (see Figure \ref{fig:bernoulli-entropy}) reveals that $H(X_p)$ seems to be maximised for $p$ and minimised for $p \in \{0, 1\}$.
+    A visual inspection (see Figure \ref{fig:bernoulli-entropy}) reveals that $H(X_p)$ seems to be maximised for $p = 0.5$ and minimised for $p \in \{0, 1\}$.
     An increase in uncertainty about the result of the coin flip seems to correspond with an increase in entropy.
 \end{example}
 
-\begin{example}
+\begin{example}[Entropy of geometric variable]
     Let $p \in (0, 1)$ and $X_p \sim G(p)$ be the number of times a weighted coin is flipped, until the first head occurs.
     We will calculate the Entropy of $X_p$. It will require the two well-known series:
     \begin{align}
@@ -128,7 +126,7 @@
     We can now directly calculate the Entropy of $X_p$:
     \begin{align*}
         H(X_p) &= \sum_{x \in \mathbb{N}}{-p(x) \log p(x)}                                  && \text{(Def. of Entropy)}\\
-        &= -\sum_{x \in \mathbb{N}}{(1-p)^{x-1} p \log\paren{(1-p)^{x-1} p}}                && \text{(Subst. in geometric density function)} \\
+        &= -\sum_{x \in \mathbb{N}}{(1-p)^{x-1} p \log\paren{(1-p)^{x-1} p}}                && \text{(Subst. in geometric mass function)} \\
         &= -\sum_{x \in \mathbb{N}}{(1-p)^{x-1} p \paren{(x-1) \log(1-p) + \log p}}         && \text{(Log rules)} \\
         &= -p \log(1-p) \sum_{x \in \mathbb{N}_{0}}\paren{(1-p)^{x} x} - p \log p \sum_{x \in \mathbb{N}_{0}}\paren{(1-p)^{x}}      && \text{(Factor out constants)} \\
         &= -p \log(1-p) \frac{1-p}{(1 - (1-p))^2} - p \log p \frac{1}{1 - (1-p)}            && \text{(Use series \ref{series:nexpr-n} and \ref{series:expr-n})}\\
@@ -140,7 +138,11 @@
     An increase in $p$ is linked to lower variance and more concentration of the distribution towards zero. 
     Based on the plot, that increase looks to be linked to a lower entropy and vice-versa.
 
-    TODO: Complete the q
+    We will now find a strategy, that calculates the number of flips until the first head occurs using simple yes/no questions.
+    A simple strategy is to ask "Is $X=1$?", "Is $X=2$?" and so on.
+    Under this strategy, the number of questions required is exactly the value of $X$.
+    Thus, the average number of questions is simply $\mathbb{E}(X_{0.5}) = \frac{1}{0.5} = 2$. 
+    This matches the entropy $H(X_{0.5}) = 2$.
 \end{example}
 
 \newpage
@@ -165,7 +167,7 @@
 \begin{definition}\label{def:entropy-mutual-info-def}
     \begin{align*}
     \intertext{\noindent We define the following:}
-        \textbf{Conditional Entropy:} & \quad H(X \mid Y) = -\mathbb{E}\paren{\log p_{(X, Y)}(X \mid Y)} \\
+        \textbf{Conditional Entropy:} & \quad H(X \mid Y) = -\mathbb{E}\paren{\log p_{(X \mid Y)}(X \mid Y)} \\
         \textbf{Joint Entropy:}       & \quad H(X, Y) = -\mathbb{E}\paren{\log p_{(X, Y)}(X, Y)}
     \intertext{\noindent Let $p$ and $q$ be two probability mass functions on the same set $\mathcal{Z}$. We define the following:}
         \textbf{Relative Entropy:}    & \quad D(p \| q) = \mathbb{E}_{X \sim p}\paren{\log \frac{p(X)}{q(X)}} 
@@ -179,17 +181,18 @@
 \begin{remark} \label{remark:relative-entropy-conventions}
     We have
     \begin{align*}
-        D(p \| q)   &= \mathbb{E}_{X ~ p}\paren{\log \frac{p(X)}{q(X)}}             && \text{(def.~of relative entropy)} \\
+        D(p \| q)   &= \mathbb{E}_{X \sim p}\paren{\log \frac{p(X)}{q(X)}}             && \text{(def.~of relative entropy)} \\
                     &= \sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}}        && \text{(def.~of expected value)}
     \end{align*}
     To understand the conventions, we can look at the limit cases:
     \begin{enumerate}
         \item Case $p \in (0, 1], q = 0$: $\lim_{q \to 0^+} p \log \frac{p}{q} = \lim_{q \to 0^+} (p \log p - p \log q) = \infty$.
         \item Case $p = 0, q \in (0, 1]$: $0 \log \frac{0}{q} = 0$.
-        \item Case $p = q = 0$: Case 1 logic yields $\lim_{q \to 0^+} p \log \frac{p}{q} = \infty$ and Case 2 logic yields $0 \log \frac{0}{0} = 0$. 
+        \item Case $p = q = 0$: Case 1 logic yields $\lim_{q \to 0^+} p \log \frac{p}{q} = \infty$ and Case 2 logic yields $0 \log \frac{0}{0} = 0$. \\
+            So what do we choose?
+            As we want $\sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}}$ to sum over $x \in \mathcal{X}, p(x) > 0$, we choose the convention $0 \log \frac{0}{0} = 0$.
     \end{enumerate}
-    As we want $\sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}}$ to sum over $x \in \mathcal{X}, p(x) > 0$, we choose the convention $0 \log \frac{0}{0} = 0$.
-    Figure \ref{fig:pointwise-rel-entropy} visualizes the the pointwise relative entropy function $(p, q) \mapsto \log \frac{p}{q}$.
+    Figure \ref{fig:pointwise-rel-entropy} visualizes the pointwise relative entropy function $(p, q) \mapsto p \log \frac{p}{q}$.
 \end{remark}
 
 \begin{example}
@@ -197,7 +200,7 @@
     Let $X \sim B(20, \alpha)$ and $Y \sim B(20, \beta)$ with $\paren{\alpha, \beta} \in [0, 1]^2$.
     \begin{align*}
                                  & \quad D(p_X \| p_Y) = \sum_{x = 0}^{20}{p_X(x) \log \frac{p_X(x)}{p_Y(x)}} \\
-        \alpha=0, \beta=1:       & \quad D(p_X \| p_Y) = 0 \log \frac{0}{1} + 1 \log \frac{1}{0} = 0 + \infty = \infty \\
+        \alpha=0, \beta=1:       & \quad D(p_X \| p_Y) = 1 \log \frac{1}{0} + 0 \log \frac{0}{1} = \infty + 0 = \infty \\
         \alpha=0.1, \beta=0.9:   & \quad D(p_X \| p_Y) \approx 50.7 \\
         \alpha=0.3, \beta=0.7:   & \quad D(p_X \| p_Y) \approx 9.8 \\
         \alpha= 0.5, \beta= 0.5: & \quad D(p_X \| p_Y) = \sum_{x = 0}^{20}{p(x) \log 1} = 0 \\
@@ -211,10 +214,23 @@
 \subsection{Mutual Information and Chain Rules}
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=1.0\linewidth]{../plots/entropy_mutual_info_venn_diagram.pdf}
+    \includegraphics[width=0.9\linewidth]{../plots/entropy_mutual_info_venn_diagram.pdf}
     \caption{Relationship between Entropy, Conditional Entropy and Mutual Information}
     \label{fig:relationships-entropy-mutual-information}
 \end{figure}
+
+% Prerequisite to the next theorem.
+\begin{theorem}[Chain Rule for Entropy]
+    We have $H(X, Y) = H(X) + H(Y \mid X)$
+\end{theorem}
+\begin{proof}
+    \begin{align*}
+        H(X, Y) &= -\mathbb{E}\paren{\log p(X, Y)} 
+        = -\mathbb{E}\paren{\log p(Y \mid X)p(X)} \\
+        &= -\mathbb{E}\paren{\log p(Y \mid X)} + -\mathbb{E}\paren{\log p(X)}
+        = H(X) + H(Y \mid X)
+    \end{align*}
+\end{proof}
 
 \begin{theorem}
     There are multiple equivalent ways to express Mutual Information (see Figure \ref{fig:relationships-entropy-mutual-information}):
@@ -222,7 +238,7 @@
         \item $I(X; Y) = H(Y) - H(Y | X)$
         \item $I(X; Y) = I(Y; X)$
         \item $I(Y; X) = H(X) - H(X | Y)$
-        \item $I(X; Y) = H(X, Y)$
+        \item $I(X; Y) = H(X) + H(Y) - H(X, Y)$
         \item $I(X; X) = H(X)$
     \end{enumerate}
 \end{theorem}
@@ -230,36 +246,33 @@
     \begin{enumerate}
         \item We can use the definition of mutual information and relative entropy to obtain:
             \begin{align*}
-                I(X; Y) &= D(p(x, y) \| p(x)p(y))                                                           && \text{(by def.~of mutual info.)}\\
-                        &= \mathbb{E}_{p(x, y)}\paren{\log \frac{p(x, y)}{p(x)p(y)}}                        && \text{(by def.~relative entropy)} \\
-                        &= \mathbb{E}_{p(x, y)}\paren{\log \frac{p(x)p(y|x)}{p(x)p(y)}}                     && \text{(using cond.~probability)} \\
-                        &= \mathbb{E}_{p(x, y)}\paren{\log \frac{p(y|x)}{p(y)}}                             && \text{(simplify fraction)} \\
-                        &= \mathbb{E}_{p(x, y)}\paren{\log p(y|x)} - \mathbb{E}_p(x, y)\paren{\log p(y)}    && \text{(simplify logarithm)} \\
-                        &= H(Y | X) - H(Y)                                                                  && \text{(by def.~of entropy)}
+                I(X; Y) &= D(p_{(X, Y)} \| p_X p_Y)                                                                                         && \text{(by def.~of mutual info.)}\\
+                        &= \mathbb{E}_{p_{(X, Y)}}\paren{\log \frac{p_{(X, Y)}(X, Y)}{p_X(X)p_Y(Y)}}                                        && \text{(by def.~relative entropy)} \\
+                        &= \mathbb{E}_{p_{(X, Y)}}\paren{\log \frac{p_X(X)p_{(Y \mid X)}{(Y \mid X)}}{p_X(X)p_Y(Y)}}                        && \text{(using cond.~probability)} \\
+                        &= \mathbb{E}_{p_{(X, Y)}}\paren{\log \frac{p_{(Y \mid X)}(Y \mid X)}{p_Y(Y)}}                                      && \text{(simplify fraction)} \\
+                        &= \mathbb{E}_{p_{(X, Y)}}\paren{\log p_{(Y \mid X)}(Y \mid X)} - \mathbb{E}_{p_{(X, Y)}}\paren{\log p_Y(Y)}        && \text{(simplify logarithm)} \\
+                        &= -H(Y \mid X) + H(Y)                                                                                              && \text{(by def.~of entropy)}
             \end{align*}
         \item The definition of mutual information yields:
             \begin{align*}
-                I(X; Y) &= D(p(x, y) \| p(x)p(y))                       && \text{(by def.~of mutual info.)} \\
-                        &= D(P[X = x, Y = y] \| P[X = x]P[Y = y])       && \text{(use clear notation)} \\
-                        &= D(P[Y = y, X = x] \| P[Y = y]P[X = x])       && \text{(use commutativity)} \\
-                        &= D(p(y, x) \| p(y)p(x))                       && \text{(back to conventional notation)}\\
-                        &= I(X; Y)
+                I(X; Y) &= D(P[X = x, Y = y] \| P[X = x]P[Y = y])       && \text{(by def.~of mutual info.)} \\
+                        &= D(P[Y = y, X = x] \| P[Y = y]P[X = x]) = I(Y; X)
             \end{align*}
-        \item Follows directly from 2 and 3.
+        \item Follows directly from 1 and 2.
         \item \begin{align*}
-                I(X; Y) &= H(Y) - H(X | Y)                  && \text{(by 1)} \\
+                I(X; Y) &= H(Y) - H(Y \mid X)               && \text{(by 1)} \\
                         &= H(Y) - \paren{H(X, Y) - H(X)}    && \text{(chain rule)} \\
                         &= H(X) + H(Y) - H(X, Y)
             \end{align*}
-        \item Using 1 we get $I(X; X) = H(X) - H(X | X) = H(X)$.
+        \item Using the Defintion we get $H(X \mid X) = 0$. Using 1 we get $I(X; X) = H(X) - H(X \mid X) = H(X)$.
     \end{enumerate}
 \end{proof}
 
 \newpage
-\begin{definition}\label{def:entropy-mutual-info-def}
+\begin{definition}\label{def:conditional-entropy-mutual}
     Let $p$ and $q$ be probability mass functions on $\mathcal{X} \times \mathcal{Y}$.
+    We define the following:
     \begin{align*}
-    \intertext{\noindent We define the following:}
         \textbf{Conditional Relative Entropy:}    & \quad D(p_{Y \mid X} \| q_{Y \mid X}) \\
         &= \mathbb{E}_{X \sim p_X} D(p(Y \mid X) \| q(Y \mid X)) \\
         &= \sum_{x \in \mathcal{X}}{p(x) D(p(y \mid x) \| q(y \mid x))} \\
@@ -311,17 +324,10 @@
     So the expression calculates how much of an error \textit{ET} makes per month, on average.
 \end{example}
 
-% TODO: Idk if this example is useful. Let's see.
-% \begin{example}
-%     To understand the concept, we can now calculate the Conditional Mutual Information for an example.
-%     % TODO: Fill in this vertical.
-% \end{example}
-
-
 \newpage
 % TODO: Explain all of these notations first.
 
-\begin{theorem}\label{theorem:chain-rules}
+\begin{theorem}[Chain Rules] \label{theorem:chain-rules}
     Let $n \in \mathbb{N}, n \ge 2$, $(X_1, \cdots, X_n) \sim p(x_1, \cdots, x_n)$ and $Y$ a random variable.
     The following statements about Entropy and Mutual Information are called Chain Rules:
     \begin{enumerate}
@@ -368,28 +374,18 @@
 
 % TODO: Definition of relative entropy correctly uses E_p everywhere instead of E.
 
-\begin{corollary}
-    The following specialization of the Chain Rule for Entropy is commonly used: $H(X, Y) = H(X) + H(Y \mid X)$
-\end{corollary}
-\begin{proof}
-    Follows from Theorem~\ref{theorem:chain-rules}.
-\end{proof}
-
 
 
 \newpage
 \section{Inequalities for Entropy and Mutual Information}
-\subsection{Convexity and Jensens Inequality}
+\subsection{Convexity and Jensen's Inequality}
 
 \begin{remark}
-    We use the common definition of convex functions, concave functions from analysis.
-    From now on, $X, Y$ have to be real-valued random variables.
+    We use the common definition of convex functions and concave functions from analysis.
 \end{remark}
 
-% TODO: Make sure which theorems and definitions assume discrete.
-
-\begin{theorem}
-    Let $f: \Omega \rightarrow \mathbb{R}$ a function.
+\begin{theorem}[Jensen's Inequality]
+    Let $\mathcal{X} \subset \mathbb{R}$ and $f: \mathcal{X} \rightarrow \mathbb{R}$ a function.
     \begin{enumerate}
         \item If $f$ is convex, we have $\mathbb{E} f(X) \ge f(\mathbb{E} X)$.
         \item If $f$ is concave, we have $\mathbb{E} f(X) \le f(\mathbb{E} X)$.
@@ -404,14 +400,13 @@
             The definition of convexity yields the base case $i = 2$: $f(p_1 x_1 + p_2 x_2) \le p_1 f(x_1) + p_2 f(x_2)$. \\
             We assume the claim holds for $n - 1$ and the induction case goes as follows: \\
             \begin{align*}
-                f\paren{\sum_{i=1}^{n}{p_i x_i}} &= f\paren{p_1 x_1 + (1 - p_1) \sum_{i=2}^{n}{\frac{p_i}{1 - p_1} x_i}}                                                                        \\
-                &\le p_1 f\paren{x_1} + (1 - p_1) f\paren{\sum_{i=2}^{n}{\frac{p_i}{1 - p_1} x_i}}           && \text{(def. of convexity)}                                                      \\
+                f\paren{\sum_{i=1}^{n}{p_i x_i}} &= f\paren{p_1 x_1 + (1 - p_1) \sum_{i=2}^{n}{\frac{p_i}{1 - p_1} x_i}} \\          
+                &\le p_1 f\paren{x_1} + (1 - p_1) f\paren{\sum_{i=2}^{n}{\frac{p_i}{1 - p_1} x_i}}              && \text{(def. of convexity)} \\
                 &\le p_1 f\paren{x_1} + (1 - p_1) \sum_{i=2}^{n}{\frac{p_i}{1 - p_1} f\paren{{x_i}}}         
                 && \text{(induct. hypo. applies bc. of $\sum_{i = 2}^{n}{\frac{p_i}{1 - p_1}}$ = 1)} \\
                 &= \sum_{i=1}^{n}{p_i f\paren{{x_i}}}
             \end{align*}
-            Else: \\% If $\mathcal{X}$ is countably infinite, the claim follows using ... .
-            % TODO: Case missing?
+            Else: If $\mathcal{X}$ is countably infinite, the claim follows using the limit of the previous case.
         \item
             Follows from part 1 applied to $-f$.
     \end{enumerate}
@@ -439,31 +434,69 @@
         \item 
             We can prove this using Jensens Inequality on a \textit{concave} function: % TODO: Make sure we use the support correctly.
             \begin{align*}
-                -D(p(x) \| q(x)) &= -\mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}}         && \text{(def. of relative entropy)}            \\
-                &\le -\log\paren{\mathbb{E}_p \frac{p(X)}{q(X)}}                        
-                = \log\paren{\mathbb{E}_p \frac{q(X)}{p(X)}}                            && \text{(-log is convex, property of log)}     \\
-                &= \log\paren{\sum_{x \in \mathcal{X}}{p(x) \frac{q(x)}{p(x)}}}         
+                -D(p(x) \| q(x)) &= -\mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}}
+                = \mathbb{E}_p\paren{\log \frac{q(X)}{p(X)}}                            && \text{(def. of relative entropy)}            \\
+                &\le \log\paren{\mathbb{E}_p \frac{q(X)}{p(X)}} \\
+                &= \log\paren{\sum_{x \in \mathcal{X}}{p(x) \frac{q(x)}{p(x)}}}
                 = \log\paren{\sum_{x \in \mathcal{X}}{q(x)}}                            && \text{(def. of exp. value, simplify expr.)}  \\
                 &= \log\paren{1} = 0                                                    && \text{(q is a prob. function)}
             \end{align*}
             So equivalently, we have $D(p(x) \| q(x)) \ge 0$.
-        \item Follows from part 1: $I(X; Y) = D(p(x, y) \| p(x)p(y)) \ge 0$.
+        \item Follows from part 2: $I(X; Y) = D(p(x, y) \| p(x)p(y)) \ge 0$.
     \end{enumerate}
 \end{proof}
+
+
+\newpage
+\subsection{Advanced Properties of Entropy}
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{../plots/information_never_hurts_venn_diagram.pdf}
+        \caption{More Information never hurts}
+        \label{fig:information-never-hurts}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{../plots/uniform_distribution_maximises_entropy.pdf}
+        \caption{Uniform Distribution maximises Entropy}
+        \label{fig:rel-entropy-bionm-distrib}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{../plots/relative_entropy_binomial_distributions.pdf}
+        \caption{Relative Entropies of Binomial Distributions}
+        \label{fig:rel-entropy-bionm-distrib}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{../plots/relative_entropy_binomial_distributions.pdf}
+        \caption{Relative Entropies of Binomial Distributions}
+        \label{fig:rel-entropy-bionm-distrib}
+    \end{subfigure}
+\end{figure}
 
 \begin{remark}
     There are multiple natural questions we can ask about Entropy.
     We will look at an example for each of them and then prove the results in the follow-up theorem.
     \begin{enumerate}
-        \item What distribution maximises the value of Entropy?
-            I simulated 
+        \item Can conditioning on more information increase the entropy? \\
+            Figure \ref{fig:information-never-hurts} illustrates the idea, that conditioning on more information can never increase the entropy.
+            We will prove this exact statement: $H(X \mid Y) \le H(X)$.
 
-            From the data, it seems plausible that the uniform distribution maximises entropy. We
-            % TODO: How difficult is it to sample from the simplex?
+        \item What distribution maximises the value of Entropy?
+
+            From the data, it seems plausible that the uniform distribution maximises entropy.
+            We will prove this statement.
+
         \item Can joint entropy increase if we add redundant information? \\
-            Let $\Omega = \{1, 2\}$, p uniform TODO, $X, Y: \Omega \rightarrow \mathbb{R}$, $X(\omega) = \omega$ and $Y(\omega) = 2\omega$.
-            $Y$ is redundant to $X$, as $Y = 2X$. \\
-            % We can now calculate the entropy to verify the intuition, that adding $Y
+            Let $\Omega = \{1, 2\}$, $\mathds{P}$ uniform, $X, Y: \Omega \rightarrow \mathbb{R}$, $X(\omega) = \omega$ and $Y(\omega) = 2\omega$.
+            $Y$ is redundant to $X$, as $Y = 2X$.
+            We can now calculate the entropy and joint entropy:
             \begin{align*}
                 H(X) &= \sum_{i = 1}^{2}{-0.5 \log 0.5} = -\log 0.5 = \log 2 = 1 \\
                 H(X, Y) &= \sum_{(i, j) \in \{(1, 2), (2, 4)\}}{-0.25 \log 0.25} = 2 * 0.25 * 2 = 1
@@ -471,12 +504,14 @@
             \end{align*}
             Pairs like $(1, 4)$ have probability zero and do not contribute to the sum in $H(X, Y)$.
             This example suggest entropy never increases. We will prove that in the follow-up theorem.
+
         \item What happens to the Entropy if we add independent noise to our measurements? \\
             Let $X \sim U(\{1, 2, 3, 4\})$ be the original signal, $N \sim B(3, 0.5)$ the noise and let $X, N$ be independent. 
             Then $S \defeq X + N$ is a noisy signal. \\
 
             We can compute the critical variance $a$.
             % TODO
+
     \end{enumerate}
 \end{remark}
 
@@ -490,7 +525,8 @@
             $H(Y \mid X) = 0 \implies \exists f\vcentcolon Y = f(X) \; \text{almost surely}$
         \item If independent noise is added to a random variable, entropy can only increase: \\
             Set $Z = X + Y$. Then we have $X, Y \text{independent} \implies H(X) \le H(Z) \land H(Y) \le H(Z)$
-        \item TODO: Maybe add independence bound?
+        \item The joint entropy of many variables never exceeds the sum of the individual entropies: \\
+            $H(X_1, \cdots, H_n) \le \sum_{i=1}^{n}{H(X_i)}$
     \end{enumerate}
 \end{theorem}
 \begin{proof}
@@ -542,40 +578,164 @@
                  &= \sum_{(x, y) \injoint}{-p(x, y) \log P[Y = y \mid X = x]} \\
                  &= -\mathbb{E}\paren{\log p(Y \mid X)} = H(Y \mid X)
             \end{align*}
-            $H(Z, X) = H(X) + H(Z \mid X)$
-            $H(Y, X) = H(X) + H(Y \mid X)$
-            % TODO: Fix this shit!
-
-            $H(Y, X) = H(X) + H(Y \mid X)$
             Using the Chain rule, we get $H(X, Y) = H(Y \mid X) + H(X)$
+
+        \item
+            Using the Chain rule, we have
+            \begin{align*}
+                H(X_1, \cdots, H_n) &= \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1)}         && \text{(chain rule)} \\
+                &\le \sum_{i=1}^{n}{H(X_i)}                                                     && \text{(information never hurts)}
+            \end{align*}
 
     \end{enumerate}
 \end{proof}
 
-% \begin{figure}
-%     \centering
-%     \includegraphics[width=0.50\linewidth]{../plots/entropy_function.png}
-%     \caption{\label{fig:entropy_function}The entropy function is a concave function.}
-% \end{figure}
-
-% TODO: Add deep learning example.
 
 \newpage
 \subsection{The Log-Sum Inequality}
-%         \item $p \mapsto H(p)$ is concave.
 
-Hello
+\begin{theorem}[Log-Sum Inequality]
+    Let $n \in \mathbb{N}$, $a_1, \cdots, a_n, b_1, \cdots, b_n \ge 0$.
+    Then we have 
+    \begin{align*}
+        \sum_{i=1}^{n}{a_i \log\frac{a_i}{b_i}} 
+        \ge \paren{\sum_{i=1}^{n}{a_i}}\log\frac{\sum_{i=1}^{n}{a_i}}{\sum_{i=1}^{n}{b_i}}
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    TODO
+\end{proof}
+
+\begin{theorem}[Convexity of Entropy] \label{theorem:convexity-of-entropy}
+    \begin{enumerate}
+        \item
+            $D(. \| .)$ is a convex function. This means that
+            \begin{align*}
+                \forall p_1, q_1, p_2, q_2, \forall \lambda \in [0, 1]\vcentcolon \quad
+                &D(\lambda p_1 + (1-\lambda) p_2 \| \lambda q_1 + (1-\lambda) q_2) \\
+                &\le \lambda D(p_1 \| q_1) + (1 - \lambda) D(p_2 \| q_2)
+            \end{align*}
+
+        \item
+            Let $X_p \sim B(1, p)$ for all $p \in (0, 1)$ and $h(p) \defeq H(X_p)$. \\
+            Then $h \le 1$ and $h$ is a concave function.
+
+        \item
+            Let $(X, Y) \sim p(x, y) = p(x)p(y \mid x)$. \\
+            Then $I(X; Y)$ is a concave function of $p(x)$ given a fixed $p(y \mid x)$. \\
+            Then $I(X; Y)$ is a convex function of $p(y \mid x)$ given a fixed $p(x)$.
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    \begin{enumerate}
+        \item
+            Let $p_1, q_1, p_2, q_2$ be probability mass functions on $\mathcal{X}$.
+            Let $\lambda \in (0, 1)$. \\
+            First of all, the set of probability densities is convex. 
+            So the above statement is well-defined. \\
+            Secondly, the inequality needs to be verified:
+            \begin{align*}
+                &D(\lambda p_1 + (1-\lambda) p_2 \| \lambda q_1 + (1-\lambda) q_2) \\
+                &= \sum_{x \in \mathcal{X}}{\paren{\lambda p_1(x) + (1-\lambda) p_2(x)} \log \frac{\lambda p_1(x) + (1-\lambda) p_2(x)}{\lambda q_1(x) + (1-\lambda) q_2(x)}}      
+                && \text{(by definition)} \\
+                &\le \sum_{x \in \mathcal{X}}{\lambda p_1(x) \log \frac{p_1(x)}{q_1(x)} + (1-\lambda) p_2(x) \log \frac{p_2(x)}{q_2(x)}}        && \text{(log-sum inequality on the 2 two-sums)} \\
+                &= \lambda D(p_1 \| q_1) + (1-\lambda) D(p_2 \| q_2)                                                                            && \text{(by definition)}
+            \end{align*}
+
+        \item
+            First, we have
+            \begin{align*}
+                h(p) &= H(X_p) = -p \log p - (1-p) \log (1-p)       && \text{(by definition)} \\
+                &= -(p \log p + (1-p) \log (1-p))                   && \text{(factor out)} \\
+                &\le -(p + 1 - p) \log \frac{p + 1 - p}{1 + 1} = -\log \frac{1}{2} = 1  && \text{(simplify)}
+            \end{align*}
+            Second, for $q$ with $\forall x \in \mathcal{X}: q(x)=\frac{1}{|\mathcal{X}|}$ we have
+            Let $p_1, p_2 \in [0, 1]$ and $\lambda \in (0, 1)$.
+            \begin{align*}
+                h(\lambda p_1 + (1-\lambda) p_2) &= H(X_{\lambda p_1 + (1-\lambda) p_2})                            && \text{(by definition)} \\
+                &= |\mathcal{X}| - D(\lambda p_1 + (1-\lambda) p_2 \| q)                                            && \text{(using theorem \ref{theorem:more-entropy-observations})} \\
+                &\ge |\mathcal{X}| - \lambda D(p_1 \| q) - (1-\lambda) D(p_2 \| q)                                  && \text{(using convexity)} \\
+                &= \lambda \paren{|\mathcal{X}| - D(p_1 \| q)} - (1-\lambda) \paren{|\mathcal{X}| - D(p_2 \| q)}    && \text{(factor out twice)} \\
+                &= \lambda H(X_{p_1}) - (1-\lambda) H(X_{p_2}) = \lambda h(p_1) + (1-\lambda) h(p_2)                && \text{(by definition, simplify)} \\
+            \end{align*}
+        \item TODO Idk how useful that result is.
+    \end{enumerate}
+\end{proof}
+
+\begin{remark}[Divergence vs Metric]
+    TODO
+\end{remark}
 
 \newpage
 \subsection{Application to Optimisation}
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{../plots/mnist_loss.pdf}
+        \caption{MNIST objective function}
+        \label{fig:mnist-loss}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{../plots/mnist_predictions.pdf}
+        \caption{MNIST images and pred. digit distr.}
+        \label{fig:mnist-predictions}
+    \end{subfigure}
+\end{figure}
 
+\begin{definition}[Cross-Entropy]
+    Let $p, q$ be probability mass functions over the set $\mathcal{X}$
+    and $X \sim p$.
+    Then Cross-Entropy is defined as $\CrossEntropy(p, q) = H(X) + D(p \| q)$.
+\end{definition}
 
-% TODO: Relative entropy is often used as a distance, but not actually a metric.
+\begin{theorem} \label{theorem:cross-entropy-properties}
+    \begin{enumerate}
+        \item $\min_{q}{\CrossEntropy(p, q)} = \min_{q}{D(p \| q)}$.
+        \item $\CrossEntropy(p, q) = -\sum_{x \in \mathcal{X}}{p(x) \log q(x)}$.
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    \begin{enumerate}
+        \item Cross-Entropy is simply Relative Entropy with a constant offset. So minimizing with respect to $q$ yields the same value.
+        \item
+            Let $X \sim p$. Then we have
+            \begin{align*}
+                \CrossEntropy(p, q) &= H(X) + D(p \| q)
+                = \sum_{x \in \mathcal{X}}{-p(x) \log p(x)} + \sum_{x \in \mathcal{X}}{p(x) \log\frac{p(x)}{q(x)}} \\
+                &= \sum_{x \in \mathcal{X}}{-p(x) \log p(x) + p(x) \log p(x) - p(x) \log q(x)} \\
+                &= -\sum_{x \in \mathcal{X}}{p(x) \log q(x)}
+            \end{align*}
+    \end{enumerate}
+\end{proof}
 
+\begin{example}[MNIST Digit Classification]
+    We can now apply the concept of Relative Entropy to solve a common classification problem from machine learning.
+    Let $\Omega$ be the set of $28$x$28$ pixel images that contain exactly one handwritten digit from $0$ to $9$.
+    The task is to predict the digit $0$ to $9$, based on the input image $\omega \in \Omega$. \\
+    In order to accomplish this task, we define a model $f: \mathbb{R}^n \rightarrow \mathbb{R}_{+}^{10}$ with $n \in \mathbb{N}$. \\
+    This function $f$ takes parameters as inputs that allow it to output a probability mass function that indicates the digit in the image.
+    So $\forall \omega \in \Omega\vcentcolon f(\omega) \ge 0 \land \sum_{i=1}^{10} f(\omega)_i = 1$. \\
+    The optimisation objective is
+    \begin{align*}
+        \Phi = \argmin_{\phi \in \mathbb{R}^n}{D(d \| f_{\phi})}
+    \end{align*}
+    which according to Theorem \ref{theorem:cross-entropy-properties} is equivalent to
+    \begin{align*}
+        \Phi = \argmin_{\phi \in \mathbb{R}^n}{\CrossEntropy(d, f_{\phi})}
+    \end{align*}
+    As we have shown in Theorem \ref{theorem:convexity-of-entropy}, the Relative Entropy and Cross-Entropy are convex functions. \\
+    For $f$, we can use a two-layer convolutional neural network with dropout, as detailed in the official PyTorch Python example \cite{Pytorch:MNIST}.
+    In this case, the model $f$ is not a convex function itself. So the optimisation objective is not convex either.
+    But at least the loss function $\CrossEntropy(d \| .)$ is convex.
+    We can now use Stochastic Gradient Descent to optimise for $60$ steps with step size 5e-3 and batch size $512$.
+    Figure \ref{fig:mnist-loss} illustrates the Value of the Objective Function over time 
+    and Figure \ref{fig:mnist-predictions} illustrates the outputs of the finished model.
+\end{example}
 
-Hello
-
-\medskip
+\newpage
 \printbibliography
 
 \end{document}
