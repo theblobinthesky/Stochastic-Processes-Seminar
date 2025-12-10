@@ -4,9 +4,7 @@ import entropy_mutual_info_venn_diagram
 import pointwise_rel_entropy_continuation
 import relative_entropy_binomial_distributions
 import noise_only_increases_entropy
-import optimisation_example
 import mnist_example
-import information_never_hurts_venn_diagram
 import uniform_distribution_maximises_entropy
 
 entropy_weighted_coin.main()
@@ -15,7 +13,5 @@ entropy_mutual_info_venn_diagram.main()
 pointwise_rel_entropy_continuation.main()
 relative_entropy_binomial_distributions.main()
 noise_only_increases_entropy.main()
-optimisation_example.main()
 mnist_example.main()
-information_never_hurts_venn_diagram.main()
 uniform_distribution_maximises_entropy.main()

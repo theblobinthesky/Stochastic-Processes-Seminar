@@ -227,7 +227,7 @@
     \begin{align*}
         H(X, Y) &= -\mathbb{E}\paren{\log p(X, Y)} 
         = -\mathbb{E}\paren{\log p(Y \mid X)p(X)} \\
-        &= -\mathbb{E}\paren{\log p(Y \mid X)} + -\mathbb{E}\paren{\log p(X)}
+        &= -\mathbb{E}\paren{\log p(Y \mid X)} - \mathbb{E}\paren{\log p(X)}
         = H(X) + H(Y \mid X)
     \end{align*}
 \end{proof}
@@ -389,6 +389,7 @@
     \begin{enumerate}
         \item If $f$ is convex, we have $\mathbb{E} f(X) \ge f(\mathbb{E} X)$.
         \item If $f$ is concave, we have $\mathbb{E} f(X) \le f(\mathbb{E} X)$.
+        \item If the inequality is strict we have $\mathbb{E}(X) = X$ almost surely.
     \end{enumerate}
 \end{theorem}
 \begin{proof}
@@ -407,8 +408,12 @@
                 &= \sum_{i=1}^{n}{p_i f\paren{{x_i}}}
             \end{align*}
             Else: If $\mathcal{X}$ is countably infinite, the claim follows using the limit of the previous case.
+
         \item
             Follows from part 1 applied to $-f$.
+
+        \item
+            TODO
     \end{enumerate}
 \end{proof}
 
@@ -453,30 +458,16 @@
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=1.0\linewidth]{../plots/information_never_hurts_venn_diagram.pdf}
-        \caption{More Information never hurts}
-        \label{fig:information-never-hurts}
+        \includegraphics[width=1.0\linewidth]{../plots/peak_distribution_minimises_entropy.pdf}
+        \caption{Peak Distribution minimises Entropy}
+        \label{fig:peak-distr-min-entropy}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=1.0\linewidth]{../plots/uniform_distribution_maximises_entropy.pdf}
         \caption{Uniform Distribution maximises Entropy}
-        \label{fig:rel-entropy-bionm-distrib}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.0\linewidth]{../plots/relative_entropy_binomial_distributions.pdf}
-        \caption{Relative Entropies of Binomial Distributions}
-        \label{fig:rel-entropy-bionm-distrib}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \includegraphics[width=1.0\linewidth]{../plots/relative_entropy_binomial_distributions.pdf}
-        \caption{Relative Entropies of Binomial Distributions}
-        \label{fig:rel-entropy-bionm-distrib}
+        \label{fig:uniform-distr-max-entropy}
     \end{subfigure}
 \end{figure}
 
@@ -485,13 +476,20 @@
     We will look at an example for each of them and then prove the results in the follow-up theorem.
     \begin{enumerate}
         \item Can conditioning on more information increase the entropy? \\
-            Figure \ref{fig:information-never-hurts} illustrates the idea, that conditioning on more information can never increase the entropy.
+            Figure \ref{fig:relationships-entropy-mutual-information} illustrates the idea, that conditioning on more information can never increase the entropy.
             We will prove this exact statement: $H(X \mid Y) \le H(X)$.
 
-        \item What distribution maximises the value of Entropy?
-
-            From the data, it seems plausible that the uniform distribution maximises entropy.
-            We will prove this statement.
+        \item What distribution minimises and what distribution maximises the value of Entropy? \\
+            To get a computational intuition for this question, we need to limit our random variables to finite supports.
+            Let $X_p \sim B(p_1, \cdots, p_n)$ be a categorical distribution. \\
+            We can now write first the question as an optimisation problem: $\min_{p \in \mathbb{R}^{n}, \|p\|_1=1, p \le 0}{H(X_p)}$. \\
+            The constraints can be automatically achieved by passing the logits through a \textit{Softmax} function.
+            We start from a random initialisation. 
+            Figure \ref{fig:uniform-distr-max-entropy} shows the solver working with Gradient Descent in Tinygrad \cite{Tinygrad}.
+            A similar approach can answer the second question.
+            Figure \ref{fig:peak-distr-min-entropy} shows the process.
+            From the data, it seems plausible that the uniform distribution maximises entropy and a peaked distribution minimises entropy.
+            We will prove these statements.
 
         \item Can joint entropy increase if we add redundant information? \\
             Let $\Omega = \{1, 2\}$, $\mathds{P}$ uniform, $X, Y: \Omega \rightarrow \mathbb{R}$, $X(\omega) = \omega$ and $Y(\omega) = 2\omega$.
@@ -506,11 +504,9 @@
             This example suggest entropy never increases. We will prove that in the follow-up theorem.
 
         \item What happens to the Entropy if we add independent noise to our measurements? \\
-            Let $X \sim U(\{1, 2, 3, 4\})$ be the original signal, $N \sim B(3, 0.5)$ the noise and let $X, N$ be independent. 
-            Then $S \defeq X + N$ is a noisy signal. \\
-
-            We can compute the critical variance $a$.
-            % TODO
+            Let $X \sim U(\{1, 2, 3, 4\})$ be the original signal, $N \sim U(\{0, 1\})$ the noise and let $X, N$ be independent. 
+            Then $S \defeq X + N$ is a noisy signal. We expect the entropy to never decrease. We will prove this later. \\
+            % TODO: Maybe add a calculation. Cannot be bothered right now, it's 2am.
 
     \end{enumerate}
 \end{remark}
@@ -519,6 +515,8 @@
     We can formalise the previous observations including some more:
     \begin{enumerate}
         \item More information can only \textit{decrease} entropy: $H(X \mid Y) \le H(X)$.
+        \item A peaked distribution minimises entropy: \\
+            $H(X) \ge 0$ and $H(X) = 0 \iff \exists x \in \mathcal{X}: p_X(x) = 1$.
         \item The uniform distribution maximizes entropy: \\
             $H(X) \le \log |\mathcal{X}|$ and $H(X) = \log |\mathcal{X}| \iff X \sim U(\mathcal{X})$.
         \item If information from $Y$ does not add anything to $X$, then $Y$ must be derived from $X$: \\ % TODO: Dis true backwards?
@@ -529,9 +527,18 @@
             $H(X_1, \cdots, H_n) \le \sum_{i=1}^{n}{H(X_i)}$
     \end{enumerate}
 \end{theorem}
+\newpage
 \begin{proof}
     \begin{enumerate}
         \item $0 \le I(X; Y) = H(X) - H(X \mid Y) \iff H(X \mid Y) \le H(X)$
+
+        \item
+            Let $X$ be a discrete random variable with an entropy. Then we have
+            \begin{align*}
+                H(X) = 0
+                &\iff \forall x \in \mathcal{X}: p_X(x) \log p_X(x) = 0 \\
+                &\iff \forall x \in \mathcal{X}: p_X(x) = 0 \oplus p_X(x) = 1
+            \end{align*}
 
         \item
             Let $Y \sim U(\mathcal{X})$ st. $\forall x \in \mathcal{X}\vcentcolon q(x)=\frac{1}{|\mathcal{X}|}$.
@@ -544,30 +551,20 @@
                 &= -H(X) + \log |\mathcal{X}| = \log |\mathcal{X}| - H(X)
             \end{align*}
             This is equivalent to $H(X) \le \log |\mathcal{X}|$.
-            Lastly, show that $H(X) = \log |\mathcal{X}| \iff X \sim U(\mathcal{X})$. \\
-            $"\Leftarrow":$ This follows from the calculation above. \\
-            $"\Rightarrow":$
-            \begin{align*}
-                \log |\mathcal{X}| = -\sum_{x \in \mathcal{X}}{p(x) \log q(x)}
-                \iff \log\frac{1}{|\mathcal{X}|} = \sum_{x \in \mathcal{X}}{p(x) \log q(x)} \\
-                \iff \sum_{x \in \mathcal{X}}{p(x) \log\frac{1}{|\mathcal{X}|}} = \sum_{x \in \mathcal{X}}{p(x) \log q(x)} \\
-                % TODO
-            \end{align*}
+            Lastly, Jensen's Inequality (3) yields the equivalence.
 
         \item
             We have $H(Y \mid X) = -\mathbb{E}\paren{\log p(Y \mid X)} = \sum_{(x, y) \injoint}{-p(x, y) \log p(y \mid x)}$. \\
             Additionally, we have $\forall (x, y) \in \mathcal{X} \times \mathcal{Y}: -p(x, y) \log p(y \mid x) \ge 0$. \\
             Combining those facts, we get
             \begin{align*}
-                &H(Y \mid X) = 0 \\
-                \iff &\forall (x, y) \injoint: p(x, y) \log p(y \mid x) = 0 \\
-                \iff &\forall (x, y) \injoint: p(x, y) = 0 \oplus \log p(y \mid x) = 0 \\
-                \iff &\forall (x, y) \injoint: p(x, y) = 0 \oplus p(y \mid x) = 1
+                H(Y \mid X) = 0
+                &\iff \forall (x, y) \injoint: p(x, y) \log p(y \mid x) = 0 \\
+                &\iff \forall (x, y) \injoint: p(x, y) = 0 \oplus p(y \mid x) = 1
             \end{align*}
             This tells us, that either $p(x, y) = 0$ or $p(x, y) = p(y \mid x)p(x) = p(x) = 1$. \\
-            Now we can finish up the argument. Set $A = \{x \in \mathcal{X}: p(x) > 0\}$. \\
             Define $(y_x)_{x \in \mathcal{X}}$ such that $\forall x \in \mathcal{X}: p(x, y_x) > 0$. \\
-            Set $f: A \rightarrow \mathcal{Y}, x \mapsto y_x$. This gets us $Im f = \{y_x: x \in \mathcal{X}\} = \{y \in \mathcal{Y}: p(x, y) > 0\}$. \\
+            Set $f: \supp(X) \rightarrow \mathcal{Y}, x \mapsto y_x$. This gets us $Im(f) = \{y_x: x \in \mathcal{X}\} = \{y \in \mathcal{Y}: p(x, y) > 0\}$. \\
             So $Y = f(X) \; \text{almost surely}$.
 
         \item
@@ -575,10 +572,13 @@
             \begin{align*}
                  H(Z \mid X) &= -\mathbb{E}\paren{\log p(Z \mid X)} = \sum_{(x, y) \injoint}{-p(x, y) \log P[Z = x + y \mid X = x]} \\
                  &= \sum_{(x, y) \injoint}{-p(x, y) \log P[X + Y = x + y \mid X = x]} \\
-                 &= \sum_{(x, y) \injoint}{-p(x, y) \log P[Y = y \mid X = x]} \\
-                 &= -\mathbb{E}\paren{\log p(Y \mid X)} = H(Y \mid X)
+                 &= \sum_{(x, y) \injoint}{-p(x, y) \log P[Y = y \mid X = x]}
+                 = -\mathbb{E}\paren{\log p(Y \mid X)} = H(Y \mid X)
             \end{align*}
-            Using the Chain rule, we get $H(X, Y) = H(Y \mid X) + H(X)$
+            Similarly, $H(Z \mid Y) = H(X \mid Y)$. \\
+            Using indep. of $X, Y$ and information never hurts, we get: \\
+            $H(X) = H(X \mid Y) = H(Z \mid Y) \le H(Z)$. \\
+            Similarly, we get $H(Y) = H(Y \mid X) = H(Z \mid X) \le H(Z)$.
 
         \item
             Using the Chain rule, we have
@@ -620,10 +620,6 @@
             Let $X_p \sim B(1, p)$ for all $p \in (0, 1)$ and $h(p) \defeq H(X_p)$. \\
             Then $h \le 1$ and $h$ is a concave function.
 
-        \item
-            Let $(X, Y) \sim p(x, y) = p(x)p(y \mid x)$. \\
-            Then $I(X; Y)$ is a concave function of $p(x)$ given a fixed $p(y \mid x)$. \\
-            Then $I(X; Y)$ is a convex function of $p(y \mid x)$ given a fixed $p(x)$.
     \end{enumerate}
 \end{theorem}
 \begin{proof}
@@ -658,7 +654,6 @@
                 &= \lambda \paren{|\mathcal{X}| - D(p_1 \| q)} - (1-\lambda) \paren{|\mathcal{X}| - D(p_2 \| q)}    && \text{(factor out twice)} \\
                 &= \lambda H(X_{p_1}) - (1-\lambda) H(X_{p_2}) = \lambda h(p_1) + (1-\lambda) h(p_2)                && \text{(by definition, simplify)} \\
             \end{align*}
-        \item TODO Idk how useful that result is.
     \end{enumerate}
 \end{proof}
 
@@ -728,6 +723,7 @@
     \end{align*}
     As we have shown in Theorem \ref{theorem:convexity-of-entropy}, the Relative Entropy and Cross-Entropy are convex functions. \\
     For $f$, we can use a two-layer convolutional neural network with dropout, as detailed in the official PyTorch Python example \cite{Pytorch:MNIST}.
+    The solver is Tinygrad \cite{Tinygrad}.
     In this case, the model $f$ is not a convex function itself. So the optimisation objective is not convex either.
     But at least the loss function $\CrossEntropy(d \| .)$ is convex.
     We can now use Stochastic Gradient Descent to optimise for $60$ steps with step size 5e-3 and batch size $512$.

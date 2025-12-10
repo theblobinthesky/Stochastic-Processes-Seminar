@@ -95,7 +95,7 @@ def _collect_samples(
     return image_list, probs_list, label_list
 
 
-if __name__ == "__main__":
+def main():
     np.random.seed(SEED)
     X_train, Y_train, X_test, Y_test = mnist(fashion=getenv("FASHION"))
 
@@ -138,3 +138,6 @@ if __name__ == "__main__":
     sample_images, sample_probs, sample_labels = _collect_samples(model, X_test, Y_test)
     _save_loss_plot(loss_history)
     _save_prediction_plot(sample_images, sample_probs, sample_labels)
+
+if __name__ == "__main__":
+    main()

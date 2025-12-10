@@ -4,7 +4,7 @@ import numpy as np
 from tinygrad import Tensor, nn
 
 PLOTS_DIR = Path(__file__).resolve().parent.parent / "plots"
-PLOT_PATH = PLOTS_DIR / "uniform_distribution_maximises_entropy.pdf"
+PLOT_PATH = PLOTS_DIR / "peak_distribution_minimises_entropy.pdf"
 
 
 @Tensor.train()
@@ -26,7 +26,7 @@ def main():
         probs = logits.softmax()
 
         entropy = -(probs * probs.log2()).sum()
-        loss = -entropy
+        loss = entropy
 
         loss.backward()
         optim.schedule_step()
@@ -46,13 +46,9 @@ def main():
         h = history_entropy[snapshot_idx]
 
         ax.bar(x, p, color="tab:blue", alpha=0.7, edgecolor="black")
-        ax.set_ylim(0, 0.35)
+        ax.set_ylim(0, 1)
         ax.set_title(f"Step {(snapshot_idx + 1) * 5}\n$H(X)={h:.2f}$ bits", fontsize=16)
         ax.set_xticks([])
-
-        ax.axhline(1 / N, color="red", linestyle="--", alpha=0.5, linewidth=2)
-
-    axes[-1].text(N / 2, 1 / N + 0.02, "Uniform", color="red", ha="center", fontsize=24)
 
     PLOTS_DIR.mkdir(parents=True, exist_ok=True)
     fig.savefig(PLOT_PATH)
