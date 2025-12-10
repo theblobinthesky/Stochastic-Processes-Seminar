@@ -340,18 +340,6 @@
     \end{proof}
 \end{frame}
 
-\begin{frame}{Theorem 3: Proof of (2)}
-    \begin{proof}[Proof of (2)]
-        \begin{align*}
-            D(p(x) \| q(x)) &= \sum_{(x, y) \injoint}{p(x, y) \frac{p(x)}{q(x)}}
-            = \sum_{(x, y) \injoint}{p(x, y) \frac{p(x)}{q(x)}} \\
-            &= \sum_{(x, y) \injoint}{p(x, y) \frac{p(x \mid y)p(y)}{q(x \mid y)p(y)}} \\
-            &= \sum_{(x, y) \injoint}{p(x, y) \frac{p(x \mid y)}{q(x \mid y)}} + \sum_{(x, y) \injoint}{p(x, y) \frac{p(y)}{p(y)}} \\
-            &= D(p(x \mid y) \| q(x \mid y)) + D(p(y) \| q(y))
-        \end{align*}
-    \end{proof}
-\end{frame}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Inequalities for Entropy and Mutual Information}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -368,40 +356,9 @@
         \begin{enumerate}
             \item If $f$ is convex, we have $\mathbb{E} f(X) \ge f(\mathbb{E} X)$.
             \item If $f$ is concave, we have $\mathbb{E} f(X) \le f(\mathbb{E} X)$.
-            \item If $f$ is strictly convex and $\mathbb{E} f(X) = f(\mathbb{E} X)$, we have $\mathbb{E}(X) = X$ almost surely.
+            \item If the inequality is strict we have $\mathbb{E}(X) = X$ almost surely.
         \end{enumerate}
     \end{thm}
-\end{frame}
-
-\begin{frame}{Theorem 4: Proof of (1) -- Finite case}
-    \begin{proof}[Proof of (1)]
-        Let $n \in \mathbb{N} \setminus \{1\}$, $p_1, \cdots, p_n \in (0, 1)$ with $\sum_{i=1}^{n}{p_i} = 1$ and $x_1, \cdots, x_n \in \mathbb{R}$.
-        If $\mathcal{X}$ is finite, show $f\paren{\sum_{i=1}^{n}{p_i x_i}} \le \sum_{i=1}^{n}{p_i f(x_i)}$ by induction. \\
-        Base case $i = 2$: $f(p_1 x_1 + p_2 x_2) \le p_1 f(x_1) + p_2 f(x_2)$ (def.~of convexity). \\
-        Assume the claim holds for $n - 1$. Induction case:
-        {\small
-        \begin{align*}
-            f\paren{\sum_{i=1}^{n}{p_i x_i}} &= f\paren{p_1 x_1 + (1 - p_1) \sum_{i=2}^{n}{\frac{p_i}{1 - p_1} x_i}} \\          
-            &\le p_1 f\paren{x_1} + (1 - p_1) f\paren{\sum_{i=2}^{n}{\frac{p_i}{1 - p_1} x_i}}              && \text{(def. of convexity)} \\
-            &\le p_1 f\paren{x_1} + (1 - p_1) \sum_{i=2}^{n}{\frac{p_i}{1 - p_1} f\paren{{x_i}}}         
-            && \text{(induct. hypo.)} \\
-            &= \sum_{i=1}^{n}{p_i f\paren{{x_i}}}
-        \end{align*}
-        }
-    \end{proof}
-\end{frame}
-
-\begin{frame}{Theorem 4: Proof of (2) and (3)}
-    \begin{proof}[Proof of (2)]
-        Follows from part 1 applied to $-f$.
-    \end{proof}
-    
-    \vspace{1em}
-    
-    \begin{proof}[Proof of (3)]
-        If $f$ is strictly convex, the inequality in (1) is strict. 
-        But equality holds, so all probability mass must be concentrated in one value.
-    \end{proof}
 \end{frame}
 
 \begin{frame}{Corollary 1: Non-negativity (Statement)}
@@ -435,8 +392,7 @@
             = \mathbb{E}_p\paren{\log \frac{q(X)}{p(X)}}                            && \text{(def. of relative entropy)}            \\
             &\le \log\paren{\mathbb{E}_p \frac{q(X)}{p(X)}}                         && \text{(Jensen's inequality)} \\
             &= \log\paren{\sum_{x \in \mathcal{X}}{p(x) \frac{q(x)}{p(x)}}}
-            = \log\paren{\sum_{x \in \mathcal{X}}{q(x)}}                            && \text{(def. of exp. value, simplify)}  \\
-            &= \log\paren{1} = 0                                                    && \text{(q is a prob. function)}
+            = \log\paren{\sum_{x \in \mathcal{X}}{q(x)}} = \log\paren{1} = 0                            && \text{(def. of exp. value, simplify)}  \\
         \end{align*}
         So equivalently, we have $D(p(x) \| q(x)) \ge 0$.
     \end{proof}
@@ -452,40 +408,7 @@
 \section{Advanced Properties of Entropy}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{Remark 5: Natural Questions about Entropy}
-    \begin{rmk}
-        There are multiple natural questions we can ask about Entropy.
-        We will look at an example for each of them and then prove the results.
-        \begin{enumerate}
-            \item Can conditioning on more information increase the entropy?
-            \item What finite distribution minimises and what distribution maximises the value of Entropy?
-            \item Can joint entropy increase if we add redundant information?
-            \item What happens to the Entropy if we add independent noise to our measurements?
-        \end{enumerate}
-    \end{rmk}
-\end{frame}
-
-%% Question 1: Information never hurts
-\begin{frame}{Remark 5: Question 1 -- Can conditioning increase entropy?}
-    \begin{rmk}
-        \textbf{Question 1:} Can conditioning on more information increase the entropy?
-        
-        \vspace{0.5em}
-        The Venn diagram illustrates that conditioning on more information can never increase the entropy.
-    \end{rmk}
-    \begin{thm}
-        More information can only \textit{decrease} entropy: $H(X \mid Y) \le H(X)$.
-    \end{thm}
-\end{frame}
-
-\begin{frame}{Theorem 5: Proof of (1) -- Information never hurts}
-    \begin{proof}
-        $0 \le I(X; Y) = H(X) - H(X \mid Y) \iff H(X \mid Y) \le H(X)$
-    \end{proof}
-\end{frame}
-
-%% Question 2: Distributions that extremize entropy
-\begin{frame}{Remark 5: Question 2 -- What distributions extremize entropy?}
+\begin{frame}{Remark 5: Question 2 -- What finite distributions extremize entropy?}
     \begin{rmk}
         \textbf{Question 2:} What finite distribution minimises and what distribution maximises the value of Entropy?
         
@@ -504,7 +427,7 @@
     \end{thm}
 \end{frame}
 
-\begin{frame}{Remark 5: Figures for Question 2}
+\begin{frame}{Remark 5: Natural Questions about Entropy}
     \begin{figure}
         \centering
         \begin{minipage}{0.45\textwidth}
@@ -521,7 +444,7 @@
     \end{figure}
 \end{frame}
 
-\begin{frame}{Theorem 5: Proof of (2a) -- Peaked distribution minimises entropy}
+\begin{frame}{Theorem 5: Proof -- Peaked distribution minimises entropy}
     \begin{proof}
         Let $X$ be a discrete random variable with an entropy. Then we have
         \begin{align*}
@@ -532,7 +455,7 @@
     \end{proof}
 \end{frame}
 
-\begin{frame}{Theorem 5: Proof of (2b) -- Uniform distribution maximises entropy}
+\begin{frame}{Theorem 5: Proof -- Uniform distribution maximises entropy}
     \begin{proof}
         Let $Y \sim U(\mathcal{X})$ st. $\forall x \in \mathcal{X}\vcentcolon q(x)=\frac{1}{|\mathcal{X}|}$.
         \begin{align*}
@@ -545,71 +468,6 @@
         \end{align*}
         This is equivalent to $H(X) \le \log |\mathcal{X}|$.
         Lastly, Jensen's Inequality (3) yields the equivalence.
-    \end{proof}
-\end{frame}
-
-%% Question 3: Redundant information
-\begin{frame}{Remark 5: Question 3 -- Can redundant info increase entropy?}
-    \begin{rmk}
-        \textbf{Question 3:} Can joint entropy increase if we add redundant information?
-        
-        \vspace{0.5em}
-        Let $\Omega = \{1, 2\}$, $\mathds{P}$ uniform, $X, Y: \Omega \rightarrow \mathbb{R}$, $X(\omega) = \omega$ and $Y(\omega) = 2\omega$.
-        $Y$ is redundant to $X$, as $Y = 2X$.
-        We can calculate $H(X) = H(X, Y) = 1$.
-        This suggests entropy never increases with redundant info.
-    \end{rmk}
-    \begin{thm}
-        If information from $Y$ does not add anything to $X$, then $Y$ must be derived from $X$: \\
-        $H(Y \mid X) = 0 \implies \exists f\vcentcolon Y = f(X) \; \text{almost surely}$
-    \end{thm}
-\end{frame}
-
-\begin{frame}{Theorem 5: Proof of (3) -- Redundant information}
-    \begin{proof}
-        We have $H(Y \mid X) = -\mathbb{E}\paren{\log p(Y \mid X)} = \sum_{(x, y) \injoint}{-p(x, y) \log p(y \mid x)}$. \\
-        Additionally, $\forall (x, y) \in \mathcal{X} \times \mathcal{Y}: -p(x, y) \log p(y \mid x) \ge 0$. \\
-        Combining:
-        \begin{align*}
-            H(Y \mid X) = 0
-            &\iff \forall (x, y) \injoint: p(x, y) \log p(y \mid x) = 0 \\
-            &\iff \forall (x, y) \injoint: p(x, y) = 0 \oplus p(y \mid x) = 1
-        \end{align*}
-        This tells us, that either $p(x, y) = 0$ or $p(x, y) = p(y \mid x)p(x) = p(x) = 1$. \\
-        Define $(y_x)_{x \in \mathcal{X}}$ such that $\forall x \in \mathcal{X}: p(x, y_x) > 0$. \\
-        Set $f: \supp(X) \rightarrow \mathcal{Y}, x \mapsto y_x$. This gets us $Im(f) = \{y_x: x \in \mathcal{X}\} = \{y \in \mathcal{Y}: p(x, y) > 0\}$. \\
-        So $Y = f(X) \; \text{almost surely}$.
-    \end{proof}
-\end{frame}
-
-%% Question 4: Independent noise
-\begin{frame}{Remark 5: Question 4 -- What happens with independent noise?}
-    \begin{rmk}
-        \textbf{Question 4:} What happens to the Entropy if we add independent noise to our measurements?
-        
-        \vspace{0.5em}
-        Let $X \sim U(\{1, 2, 3, 4\})$ be the original signal, $N \sim U(\{0, 1\})$ the noise and let $X, N$ be independent. 
-        Then $S \defeq X + N$ is a noisy signal. We expect the entropy to never decrease.
-    \end{rmk}
-    \begin{thm}
-        If independent noise is added to a random variable, entropy can only increase: \\
-        Set $Z = X + Y$. Then: $X, Y \text{ independent} \implies H(X) \le H(Z) \land H(Y) \le H(Z)$
-    \end{thm}
-\end{frame}
-
-\begin{frame}{Theorem 5: Proof of (4) -- Independent noise}
-    \begin{proof}
-        We have
-        \begin{align*}
-             H(Z \mid X) &= -\mathbb{E}\paren{\log p(Z \mid X)} = \sum_{(x, y) \injoint}{-p(x, y) \log P[Z = x + y \mid X = x]} \\
-             &= \sum_{(x, y) \injoint}{-p(x, y) \log P[X + Y = x + y \mid X = x]} \\
-             &= \sum_{(x, y) \injoint}{-p(x, y) \log P[Y = y \mid X = x]}
-             = -\mathbb{E}\paren{\log p(Y \mid X)} = H(Y \mid X)
-        \end{align*}
-        Using Independence and Information never hurts, we get
-        $H(X) = H(X \mid Y) = H(Z \mid Y) \le H(Z)$
-        and
-        $H(Y) = H(Y \mid X) = H(Z \mid X) \le H(Z)$.
     \end{proof}
 \end{frame}
 
@@ -628,23 +486,18 @@
     \end{thm}
 \end{frame}
 
-\begin{frame}{Theorem 7: Convexity of Relative Entropy (Statement)}
-    \begin{thm}[Convexity of Entropy]
-        \begin{enumerate}
-            \item $D(. \| .)$ is a convex function. This means that
-            \begin{align*}
-                \forall p_1, q_1, p_2, q_2, \forall \lambda \in [0, 1]\vcentcolon \quad
-                &D(\lambda p_1 + (1-\lambda) p_2 \| \lambda q_1 + (1-\lambda) q_2) \\
-                &\le \lambda D(p_1 \| q_1) + (1 - \lambda) D(p_2 \| q_2)
-            \end{align*}
-            
-            \item Let $X_p \sim B(1, p)$ for all $p \in (0, 1)$ and $h(p) \defeq H(X_p)$. \\
-            Then $h \le 1$ and $h$ is a concave function.
-        \end{enumerate}
+\begin{frame}{Theorem 7: Convexity of Relative Entropy}
+    \begin{thm}[Convexity of Relative Entropy]
+        $D(. \| .)$ is a convex function. This means that
+        \begin{align*}
+            \forall p_1, q_1, p_2, q_2, \forall \lambda \in [0, 1]\vcentcolon \quad
+            &D(\lambda p_1 + (1-\lambda) p_2 \| \lambda q_1 + (1-\lambda) q_2) \\
+            &\le \lambda D(p_1 \| q_1) + (1 - \lambda) D(p_2 \| q_2)
+        \end{align*}
     \end{thm}
 \end{frame}
 
-\begin{frame}{Theorem 7: Proof of (1)}
+\begin{frame}{Theorem 7: Proof}
     \begin{proof}
         Let $p_1, q_1, p_2, q_2$ be probability mass functions on $\mathcal{X}$.
         Let $\lambda \in (0, 1)$. \\
@@ -658,33 +511,6 @@
             &\le \sum_{x \in \mathcal{X}}{\lambda p_1(x) \log \frac{p_1(x)}{q_1(x)} + (1-\lambda) p_2(x) \log \frac{p_2(x)}{q_2(x)}}        && \text{(log-sum inequality)} \\
             &= \lambda D(p_1 \| q_1) + (1-\lambda) D(p_2 \| q_2)                                                                            && \text{(by definition)}
         \end{align*}
-    \end{proof}
-\end{frame}
-
-\begin{frame}{Theorem 7: Proof of (2) -- $h \le 1$}
-    \begin{proof}
-        First, we have
-        \begin{align*}
-            h(p) &= H(X_p) = -p \log p - (1-p) \log (1-p)       && \text{(by definition)} \\
-            &= -(p \log p + (1-p) \log (1-p))                   && \text{(factor out)} \\
-            &\le -(p + 1 - p) \log \frac{p + 1 - p}{1 + 1} = -\log \frac{1}{2} = 1  && \text{(simplify)}
-        \end{align*}
-    \end{proof}
-\end{frame}
-
-\begin{frame}{Theorem 7: Proof of (2) -- $h$ is concave}
-    \begin{proof}
-        For $q$ with $\forall x \in \mathcal{X}: q(x)=\frac{1}{|\mathcal{X}|}$.
-        Let $p_1, p_2 \in [0, 1]$ and $\lambda \in (0, 1)$.
-        {\small
-        \begin{align*}
-            h(\lambda p_1 + (1-\lambda) p_2) &= H(X_{\lambda p_1 + (1-\lambda) p_2})                            && \text{(by definition)} \\
-            &= |\mathcal{X}| - D(\lambda p_1 + (1-\lambda) p_2 \| q)                                            && \text{(using Theorem 5)} \\
-            &\ge |\mathcal{X}| - \lambda D(p_1 \| q) - (1-\lambda) D(p_2 \| q)                                  && \text{(using convexity)} \\
-            &= \lambda \paren{|\mathcal{X}| - D(p_1 \| q)} + (1-\lambda) \paren{|\mathcal{X}| - D(p_2 \| q)}    && \text{(factor out twice)} \\
-            &= \lambda H(X_{p_1}) + (1-\lambda) H(X_{p_2}) = \lambda h(p_1) + (1-\lambda) h(p_2)                && \text{(by definition)}
-        \end{align*}
-        }
     \end{proof}
 \end{frame}
 
