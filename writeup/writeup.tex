@@ -564,6 +564,10 @@
                  = -\mathbb{E}\paren{\log p(Y \mid X)} = H(Y \mid X)
             \end{align*}
             Using the Chain rule, we get $H(X, Y) = H(Y \mid X) + H(X)$
+            Using Independence and Information never hurts, we get
+            $H(X) = H(X \mid Y) = H(Z \mid Y) \le H(Z)$
+            and
+            $H(Y) = H(Y \mid X) = H(Z \mid X) \le H(Z)$.
 
         \item
             Using the Chain rule, we have
