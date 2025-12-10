@@ -7,17 +7,17 @@
     Example 1
     Example 2 (spilling out of the page)
     Definition 2
-    Remark 3 (delete image)
+    Remark 3
     Example 3
     Theorem 1
     Theorem 2 (make image larger; only prove (1) as an example; the rest are boring)
-    Theorem 3 (only prove (1); the rest are too much)
-    Theorem 4 (no proofs; relatively boring!)
+    Theorem 3 (only prove (1) and (2); the rest are too much)
+    Theorem 4 (proof of all)
     Corollary 1
-    Remark 5 (delete Question 1, 3, 4, 5)
+    Remark 5 (do not delete questions)
     Theorem 5 (state theorems on slide with individual questions; proof comes right after the q slide)
     Theorem 6 (no proof)
-    Theorem 7 (delete part 2 and proof 2)
+    Theorem 7 (do not delete anything)
     Definition 4 (delete all)
     Theorem 8 (delete all)
     Example 5 (delete cross entropy mention; minimizing relative entropy is enough)

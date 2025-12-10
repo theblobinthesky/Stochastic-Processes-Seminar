@@ -117,7 +117,7 @@
     \begin{rmk}
         \begin{enumerate}
         \setcounter{enumi}{3}
-        \item We also use the following convention and justify it through a continuity argument:
+            \item We also use the following convention and justify it through a continuity argument:
             \begin{align*}
                 0 \log 0 = \lim_{x \to 0^+}{x \log x}
                 = \lim_{x \to 0^+}\frac{\log x}{\frac{1}{x}}
@@ -125,7 +125,7 @@
                 = \lim_{x \to 0^+}\frac{-x}{\ln(2)} = 0
             \end{align*}
             This choice is sensible, as $\log x$ is not defined for negative $x$.
-        
+
             \item The conventions, definitions and theorems are from Definitions, Theorems, Remarks and Exercises 
             in \textit{Elements of Information Theory, second edition}.
         \end{enumerate}
@@ -215,16 +215,18 @@
     \begin{defn}
         \begin{align*}
             \textbf{Conditional Entropy:} & \quad H(X \mid Y) = -\mathbb{E}\paren{\log p_{(X \mid Y)}(X \mid Y)} \\
-            \textbf{Joint Entropy:}       & \quad H(X, Y) = -\mathbb{E}\paren{\log p_{(X, Y)}(X, Y)} \\
-            \textbf{Relative Entropy:}    & \quad D(p \| q) = \mathbb{E}_{X \sim p}\paren{\log \frac{p(X)}{q(X)}} 
+            &= \sum_{(x, y) \injoint}{p_{(X, Y)}(x, y) \log p_{(X \mid Y)}(x \mid y)} \\
+            \textbf{Joint Entropy:}       & \quad H(X, Y) = -\mathbb{E}\paren{\log p_{(X, Y)}(X, Y)} && \text{(dito)}\\
+            \textbf{Relative Entropy:}    & \quad D(p \| q) = \mathbb{E}_{X \sim p}\paren{\log \frac{p(X)}{q(X)}} \\
+            &= \sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}}
                 \quad \text{(also: KL-Divergence)} \\
             \textbf{Mutual Information:}  & \quad I(X; Y) = D(p_{(X, Y)} \| p_X \, p_Y)
         \end{align*}
-        where $p, q$ are probability mass functions on the same set $\mathcal{Z}$, with conventions from Remark 3.
+        where $p, q$ are probability mass functions on the same set $\mathcal{X}$, with conventions from Remark 3.
     \end{defn}
 \end{frame}
 
-\begin{frame}{Remark 3: Relative Entropy Conventions}
+\begin{frame}{Remark 3: More Conventions}
     \begin{rmk}
         We have $D(p \| q) = \sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}}$.
         To understand the conventions, we look at limit cases:
@@ -234,6 +236,7 @@
             \item Case $p = q = 0$: Case 1 logic yields $\infty$ and Case 2 logic yields $0$. \\
                 As we want $\sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}}$ to sum over $x \in \mathcal{X}, p(x) > 0$, we choose $0 \log \frac{0}{0} = 0$.
         \end{enumerate}
+        If $p_Y(y) = 0$, we get $p_{(X, Y)}(x, y) = 0$. So $0 \log 0 = 0$ justifies that cond. entropy is well-defined.
     \end{rmk}
 \end{frame}
 
@@ -328,13 +331,7 @@
 \begin{frame}{Theorem 3: Proof of (1)}
     \begin{proof}[Proof of (1)]
         Prove this result using induction by $n$. \\
-        Base case $n = 2$:
-        \begin{align*}
-            H(X_1, X_2) &= -\mathbb{E}\paren{\log p(X_1, X_2)} \\
-            &= -\mathbb{E}\paren{\log p(X_2 \mid X_1)p(X_1)} \\
-            &= -\mathbb{E}\paren{\log p(X_2 \mid X_1)} + -\mathbb{E}\paren{\log p(X_1)} \\
-            &= H(X_1) + H(X_2 \mid X_1)
-        \end{align*}
+        Base case $n = 2$: Chain rule for two variables. \\
         Assume the theorem holds for $n - 1$. Induction case $n - 1$ to $n$:
         \begin{align*}
             H(X_1, \cdots, H_n) &= H(X_n | X_1, \cdots, H_{n-1}) + H(X_1, \cdots, H_{n-1})          && \text{(apply base case)} \\
@@ -369,7 +366,7 @@
         Entropy and Mutual Information are non-negative:
         \begin{enumerate}
             \item $0 \le H(X)$
-            \item $0 \le D(p(x) \| q(x))$
+            \item $0 \le D(p \| q)$
             \item $0 \le I(X; Y)$
         \end{enumerate}
     \end{cor}
@@ -393,9 +390,9 @@
         \begin{align*}
             -D(p(x) \| q(x)) &= -\mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}}
             = \mathbb{E}_p\paren{\log \frac{q(X)}{p(X)}}                            && \text{(def. of relative entropy)}            \\
-            &\le \log\paren{\mathbb{E}_p \frac{q(X)}{p(X)}} \\
+            &\le \log\paren{\mathbb{E}_p \frac{q(X)}{p(X)}}                         && \text{(Jensen's inequality)} \\
             &= \log\paren{\sum_{x \in \mathcal{X}}{p(x) \frac{q(x)}{p(x)}}}
-            = \log\paren{\sum_{x \in \mathcal{X}}{q(x)}}                            && \text{(def. of exp. value, simplify expr.)}  \\
+            = \log\paren{\sum_{x \in \mathcal{X}}{q(x)}}                            && \text{(def. of exp. value, simplify)}  \\
             &= \log\paren{1} = 0                                                    && \text{(q is a prob. function)}
         \end{align*}
         So equivalently, we have $D(p(x) \| q(x)) \ge 0$.
@@ -411,6 +408,25 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Advanced Properties of Entropy}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Remark 5: Question 2 -- What finite distributions extremize entropy?}
+    \begin{rmk}
+        \textbf{Question 2:} What finite distribution minimises and what distribution maximises the value of Entropy?
+        
+        \vspace{0.5em}
+        Let $X_p \sim B(p_1, \cdots, p_n)$ be a categorical distribution.
+        We can write the question as an optimisation problem: $\min_{p \in \mathbb{R}^{n}, \|p\|_1=1, p \ge 0}{H(X_p)}$.
+        
+        \vspace{0.5em}
+        From the figures, it seems plausible that the uniform distribution maximises entropy and a peaked distribution minimises entropy.
+    \end{rmk}
+    \begin{thm}
+        \begin{itemize}
+            \item A peaked distribution minimises entropy: $H(X) = 0 \iff \exists x \in \mathcal{X}: p_X(x) = 1$.
+            \item The uniform distribution maximizes entropy: $H(X) = \log |\mathcal{X}| \iff X \sim U(\mathcal{X})$.
+        \end{itemize}
+    \end{thm}
+\end{frame}
 
 \begin{frame}{Remark 5: Natural Questions about Entropy}
     \begin{figure}
@@ -429,25 +445,6 @@
     \end{figure}
 \end{frame}
 
-\begin{frame}{Remark 5: Question 2 -- What distributions extremize entropy?}
-    \begin{rmk}
-        \textbf{Question 2:} What distribution minimises and what distribution maximises the value of Entropy?
-        
-        \vspace{0.5em}
-        Let $X_p \sim B(p_1, \cdots, p_n)$ be a categorical distribution.
-        We can write the question as an optimisation problem: $\min_{p \in \mathbb{R}^{n}, \|p\|_1=1, p \ge 0}{H(X_p)}$.
-        
-        \vspace{0.5em}
-        From the figures, it seems plausible that the uniform distribution maximises entropy and a peaked distribution minimises entropy.
-    \end{rmk}
-    \begin{thm}
-        \begin{itemize}
-            \item A peaked distribution minimises entropy: $H(X) = 0 \iff \exists x \in \mathcal{X}: p_X(x) = 1$.
-            \item The uniform distribution maximizes entropy: $H(X) = \log |\mathcal{X}| \iff X \sim U(\mathcal{X})$.
-        \end{itemize}
-    \end{thm}
-\end{frame}
-
 \begin{frame}{Theorem 5: Proof -- Peaked distribution minimises entropy}
     \begin{proof}
         Let $X$ be a discrete random variable with an entropy. Then we have
@@ -463,7 +460,7 @@
     \begin{proof}
         Let $Y \sim U(\mathcal{X})$ st. $\forall x \in \mathcal{X}\vcentcolon q(x)=\frac{1}{|\mathcal{X}|}$.
         \begin{align*}
-            0 &\le D(p(x) \| q(x))
+            0 &\le D(p \| q)
             = \mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}}
             = \sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}} \\
             &= \sum_{x \in \mathcal{X}}{p(x) \log\paren{p(x)|\mathcal{X}|}}
@@ -523,6 +520,33 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{Example 5: MNIST Digit Classification}
+    \begin{exmp}[MNIST Digit Classification]
+        We can now apply the concept of Relative Entropy to solve a common classification problem from machine learning.
+        Let $\Omega$ be the set of $28$x$28$ pixel images that contain exactly one handwritten digit from $0$ to $9$.
+        The task is to predict the digit $0$ to $9$, based on the input image $\omega \in \Omega$.
+        
+        \vspace{0.5em}
+        In order to accomplish this task, we define a model $f: \mathbb{R}^n \rightarrow \mathbb{R}_{+}^{10}$ with $n \in \mathbb{N}$.
+        This function $f$ takes parameters as inputs that allow it to output a probability mass function that indicates the digit in the image.
+        So $\forall \omega \in \Omega\vcentcolon f(\omega) \ge 0 \land \sum_{i=1}^{10} f(\omega)_i = 1$.
+    \end{exmp}
+\end{frame}
+
+\begin{frame}{Example 5: MNIST Digit Classification (1/2)}
+    The optimisation objective is
+    \begin{align*}
+        \Phi = \argmin_{\phi \in \mathbb{R}^n}{D(d \| f_{\phi})}
+    \end{align*}
+    As we have shown in Theorem 7, the Relative Entropy is a convex function.
+    
+    \vspace{0.5em}
+    For $f$, we can use a two-layer convolutional neural network with dropout.
+    In this case, the model $f$ is not a convex function itself. So the optimisation objective is not convex either.
+    But at least the loss function $D(d \| .)$ is convex.
+    We can now use Stochastic Gradient Descent to optimise for $60$ steps with step size 5e-3 and batch size $512$.
+\end{frame}
+
+\begin{frame}{Example 5: MNIST Digit Classification (2/2)}
     \begin{figure}
         \centering
         \begin{minipage}{0.45\textwidth}
@@ -539,32 +563,6 @@
     \end{figure}
 \end{frame}
 
-\begin{frame}{Example 5: MNIST Digit Classification (1/2)}
-    \begin{exmp}[MNIST Digit Classification]
-        We can now apply the concept of Relative Entropy to solve a common classification problem from machine learning.
-        Let $\Omega$ be the set of $28$x$28$ pixel images that contain exactly one handwritten digit from $0$ to $9$.
-        The task is to predict the digit $0$ to $9$, based on the input image $\omega \in \Omega$.
-        
-        \vspace{0.5em}
-        In order to accomplish this task, we define a model $f: \mathbb{R}^n \rightarrow \mathbb{R}_{+}^{10}$ with $n \in \mathbb{N}$.
-        This function $f$ takes parameters as inputs that allow it to output a probability mass function that indicates the digit in the image.
-        So $\forall \omega \in \Omega\vcentcolon f(\omega) \ge 0 \land \sum_{i=1}^{10} f(\omega)_i = 1$.
-    \end{exmp}
-\end{frame}
-
-\begin{frame}{Example 5: MNIST Digit Classification (2/2)}
-    The optimisation objective is
-    \begin{align*}
-        \Phi = \argmin_{\phi \in \mathbb{R}^n}{D(d \| f_{\phi})}
-    \end{align*}
-    As we have shown in Theorem 7, the Relative Entropy is a convex function.
-    
-    \vspace{0.5em}
-    For $f$, we can use a two-layer convolutional neural network with dropout.
-    In this case, the model $f$ is not a convex function itself. So the optimisation objective is not convex either.
-    But at least the loss function $D(d \| .)$ is convex.
-    We can now use Stochastic Gradient Descent to optimise for $60$ steps with step size 5e-3 and batch size $512$.
-\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
