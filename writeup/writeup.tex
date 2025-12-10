@@ -482,7 +482,7 @@
         \item What distribution minimises and what distribution maximises the value of Entropy? \\
             To get a computational intuition for this question, we need to limit our random variables to finite supports.
             Let $X_p \sim B(p_1, \cdots, p_n)$ be a categorical distribution. \\
-            We can now write first the question as an optimisation problem: $\min_{p \in \mathbb{R}^{n}, \|p\|_1=1, p \le 0}{H(X_p)}$. \\
+            We can now write first the question as an optimisation problem: $\min_{p \in \mathbb{R}^{n}, \|p\|_1=1, p \ge 0}{H(X_p)}$. \\
             The constraints can be automatically achieved by passing the logits through a \textit{Softmax} function.
             We start from a random initialisation. 
             Figure \ref{fig:uniform-distr-max-entropy} shows the solver working with Gradient Descent in Tinygrad \cite{Tinygrad}.
@@ -501,7 +501,7 @@
                 % TODO: These sums could maybe be expressed more formally first and then substituted in
             \end{align*}
             Pairs like $(1, 4)$ have probability zero and do not contribute to the sum in $H(X, Y)$.
-            This example suggest entropy never increases. We will prove that in the follow-up theorem.
+            This example suggests entropy never increases. We will prove that in the follow-up theorem.
 
         \item What happens to the Entropy if we add independent noise to our measurements? \\
             Let $X \sim U(\{1, 2, 3, 4\})$ be the original signal, $N \sim U(\{0, 1\})$ the noise and let $X, N$ be independent. 
@@ -524,7 +524,7 @@
         \item If independent noise is added to a random variable, entropy can only increase: \\
             Set $Z = X + Y$. Then we have $X, Y \text{independent} \implies H(X) \le H(Z) \land H(Y) \le H(Z)$
         \item The joint entropy of many variables never exceeds the sum of the individual entropies: \\
-            $H(X_1, \cdots, H_n) \le \sum_{i=1}^{n}{H(X_i)}$
+            $H(X_1, \cdots, X_n) \le \sum_{i=1}^{n}{H(X_i)}$
     \end{enumerate}
 \end{theorem}
 \newpage
@@ -562,7 +562,7 @@
                 &\iff \forall (x, y) \injoint: p(x, y) \log p(y \mid x) = 0 \\
                 &\iff \forall (x, y) \injoint: p(x, y) = 0 \oplus p(y \mid x) = 1
             \end{align*}
-            This tells us, that either $p(x, y) = 0$ or $p(x, y) = p(y \mid x)p(x) = p(x) = 1$. \\
+            This tells us that either $p(x, y) = 0$ or $p(x, y) = p(y \mid x)p(x) = p(x) = 1$. \\
             Define $(y_x)_{x \in \mathcal{X}}$ such that $\forall x \in \mathcal{X}: p(x, y_x) > 0$. \\
             Set $f: \supp(X) \rightarrow \mathcal{Y}, x \mapsto y_x$. This gets us $Im(f) = \{y_x: x \in \mathcal{X}\} = \{y \in \mathcal{Y}: p(x, y) > 0\}$. \\
             So $Y = f(X) \; \text{almost surely}$.
@@ -583,7 +583,7 @@
         \item
             Using the Chain rule, we have
             \begin{align*}
-                H(X_1, \cdots, H_n) &= \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1)}         && \text{(chain rule)} \\
+                H(X_1, \cdots, X_n) &= \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1)}         && \text{(chain rule)} \\
                 &\le \sum_{i=1}^{n}{H(X_i)}                                                     && \text{(information never hurts)}
             \end{align*}
 
