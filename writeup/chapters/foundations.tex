@@ -175,7 +175,10 @@
 
 % Prerequisite to the next theorem.
 \begin{theorem}[Chain Rule for Entropy]
-    We have $H(X, Y) = H(X) + H(Y \mid X)$
+    We have
+    \[
+        H(X, Y) = H(X) + H(Y \mid X)
+    \]
 \end{theorem}
 \begin{proof}
     \begin{align*}
@@ -248,21 +251,21 @@
     We define it as $Y: \Omega \rightarrow \mathcal{Y}, \omega \mapsto \mathds{1}_{\{\textbf{NOVEMBER}, \textbf{DECEMBER}\}}(\omega)$. \\
     We have lived on earth our entire lives. Our model of reality $p$ is correct! \\
     We define it as
-    $$
+    \[
         p(Y = 1 \mid x) = \begin{cases}
 			1, & \text{if $x \in \{\textbf{NOVEMBER}, \textbf{DECEMBER}\}$} \\
             0, & \text{otherwise}
 		\end{cases}
-    $$
+    \]
     The alien \textit{ET} visits earth. He sees the Christmas trees in January and assumes Advent continues into January.
     In November and December, he is uncertain too. His model of reality $q$ is not correct! \\
     We define it as 
-    $$
+    \[
         q(Y = 1 \mid x) = \begin{cases}
 			0.5, & \text{if $x \in \{\textbf{NOVEMBER}, \textbf{DECEMBER}, \textbf{JANUARY}\}$} \\
             0, & \text{otherwise}
 		\end{cases}
-    $$
+    \]
     Let us calculate the individual relative entropies:
     \begin{enumerate}
         \item $D(p(y \mid \textbf{NOV.}) \| q(y \mid \textbf{NOV.})) = 0 + 1 \log \frac{1}{0.5} = 1$
@@ -285,9 +288,18 @@
     Let $n \in \mathbb{N}, n \ge 2$, $(X_1, \cdots, X_n) \sim p(x_1, \cdots, x_n)$ and $Y$ a random variable.
     The following statements about Entropy and Mutual Information are called Chain Rules:
     \begin{enumerate}
-        \item $H(X_1, \cdots, X_n) = \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1)}$
-        \item $D(p(x) \| q(x)) = D(p(x \mid y) \| q(x \mid y)) + D(p(y) \| q(y))$
-        \item $I(X_1, \cdots, X_n; Y) = \sum_{i=1}^{n}{I(X_i; Y \mid X_{i-1}, \cdots, X_1)}$
+        \item
+            \[
+                H(X_1, \cdots, X_n) = \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1)}
+            \]
+        \item
+            \[
+                D(p(x) \| q(x)) = D(p(x \mid y) \| q(x \mid y)) + D(p(y) \| q(y))
+            \]
+        \item
+            \[
+                I(X_1, \cdots, X_n; Y) = \sum_{i=1}^{n}{I(X_i; Y \mid X_{i-1}, \cdots, X_1)}
+            \]
     \end{enumerate}
 \end{theorem}
 \begin{proof}

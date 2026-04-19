@@ -20,13 +20,22 @@
 \begin{definition}[Cross-Entropy]
     Let $p, q$ be probability mass functions over the set $\mathcal{X}$
     and $X \sim p$.
-    Then Cross-Entropy is defined as $\CrossEntropy(p, q) = H(X) + D(p \| q)$.
+    Then Cross-Entropy is defined as
+    \[
+        \CrossEntropy(p, q) = H(X) + D(p \| q)
+    \]
 \end{definition}
 
 \begin{theorem} \label{theorem:cross-entropy-properties}
     \begin{enumerate}
-        \item $\min_{q}{\CrossEntropy(p, q)} = \min_{q}{D(p \| q)}$.
-        \item $\CrossEntropy(p, q) = -\sum_{x \in \mathcal{X}}{p(x) \log q(x)}$.
+        \item
+            \[
+                \min_{q}{\CrossEntropy(p, q)} = \min_{q}{D(p \| q)}
+            \]
+        \item
+            \[
+                \CrossEntropy(p, q) = -\sum_{x \in \mathcal{X}}{p(x) \log q(x)}
+            \]
     \end{enumerate}
 \end{theorem}
 \begin{proof}
@@ -51,13 +60,13 @@
     This function $f$ takes parameters as inputs that allow it to output a probability mass function that indicates the digit in the image.
     So $\forall \omega \in \Omega\vcentcolon f(\omega) \ge 0 \land \sum_{i=1}^{10} f(\omega)_i = 1$. \\
     The optimisation objective is
-    \begin{align*}
+    \[
         \Phi = \argmin_{\phi \in \mathbb{R}^n}{D(d \| f_{\phi})}
-    \end{align*}
+    \]
     which according to Theorem \ref{theorem:cross-entropy-properties} is equivalent to
-    \begin{align*}
+    \[
         \Phi = \argmin_{\phi \in \mathbb{R}^n}{\CrossEntropy(d, f_{\phi})}
-    \end{align*}
+    \]
     As we have shown in Theorem \ref{theorem:convexity-of-entropy}, the Relative Entropy and Cross-Entropy are convex functions. \\
     For $f$, we can use a two-layer convolutional neural network with dropout, as detailed in the official PyTorch Python example \cite{Pytorch:MNIST}.
     The solver is Tinygrad \cite{Tinygrad}.
@@ -67,4 +76,3 @@
     Figure \ref{fig:mnist-loss} illustrates the Value of the Objective Function over time 
     and Figure \ref{fig:mnist-predictions} illustrates the outputs of the finished model.
 \end{example}
-
