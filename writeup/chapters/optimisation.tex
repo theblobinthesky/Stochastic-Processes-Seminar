@@ -55,22 +55,24 @@
     We can now apply the concept of Relative Entropy to solve a common classification problem from machine learning.
     Let $\Omega$ be the set of $28$x$28$ pixel images that contain exactly one handwritten digit from $0$ to $9$.
     The task is to predict the digit $0$ to $9$, based on the input image $\omega \in \Omega$. \\
-    In order to accomplish this task, we define a model $f: \mathbb{R}^n \rightarrow \mathbb{R}_{+}^{10}$ with $n \in \mathbb{N}$. \\
-    This function $f$ takes parameters as inputs that allow it to output a probability mass function that indicates the digit in the image.
-    So $\forall \omega \in \Omega\vcentcolon f(\omega) \ge 0 \land \sum_{i=1}^{10} f(\omega)_i = 1$. \\
-    The optimisation objective is
+    In order to accomplish this task, we define a model family $(f_{\phi})_{\phi \in \mathbb{R}^n}$ with $n \in \mathbb{N}$ and
+    $f_{\phi}: \Omega \rightarrow \mathbb{R}_{+}^{10}$ for each $\phi \in \mathbb{R}^n$. \\
+    Each function $f_{\phi}$ outputs a probability mass function over digits.
+    So $\forall \phi \in \mathbb{R}^n, \forall \omega \in \Omega\vcentcolon f_{\phi}(\omega) \ge 0 \land \sum_{i=1}^{10} f_{\phi}(\omega)_i = 1$. \\
+    Given training samples $\omega_1, \cdots, \omega_m \in \Omega$ with target distributions
+    $d_{\omega_1}, \cdots, d_{\omega_m}$, the empirical optimisation objective is
     \[
-        \Phi = \argmin_{\phi \in \mathbb{R}^n}{D(d \| f_{\phi})}
+        \Phi = \argmin_{\phi \in \mathbb{R}^n}{\frac{1}{m}\sum_{i=1}^{m}{D(d_{\omega_i} \| f_{\phi}(\omega_i))}}
     \]
     which according to Theorem \ref{theorem:cross-entropy-properties} is equivalent to
     \[
-        \Phi = \argmin_{\phi \in \mathbb{R}^n}{\CrossEntropy(d, f_{\phi})}
+        \Phi = \argmin_{\phi \in \mathbb{R}^n}{\frac{1}{m}\sum_{i=1}^{m}{\CrossEntropy(d_{\omega_i}, f_{\phi}(\omega_i))}}
     \]
     As we have shown in Theorem \ref{theorem:convexity-of-entropy}, the Relative Entropy and Cross-Entropy are convex functions. \\
-    For $f$, we can use a two-layer convolutional neural network with dropout, as detailed in the official PyTorch Python example \cite{Pytorch:MNIST}.
+    For $f_{\phi}$, we can use a two-layer convolutional neural network with dropout, as detailed in the official PyTorch Python example \cite{Pytorch:MNIST}.
     The solver is Tinygrad \cite{Tinygrad}.
-    In this case, the model $f$ is not a convex function itself. So the optimisation objective is not convex either.
-    But at least the loss function $\CrossEntropy(d \| .)$ is convex.
+    In this case, the map $\phi \mapsto f_{\phi}$ is not convex. So the optimisation objective is not convex either.
+    But at least the per-sample loss function $\CrossEntropy(d_{\omega_i}, .)$ is convex.
     We can now use Stochastic Gradient Descent to optimise for $60$ steps with step size 5e-3 and batch size $512$.
     Figure \ref{fig:mnist-loss} illustrates the Value of the Objective Function over time 
     and Figure \ref{fig:mnist-predictions} illustrates the outputs of the finished model.

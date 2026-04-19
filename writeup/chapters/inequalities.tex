@@ -51,25 +51,25 @@
     \begin{enumerate}
         \item 
             Note that $\log(\frac{1}{[0, 1]}) = \log([1, \infty]) = [0, \infty]$ 
-            and $p(X)(\mathcal{X}) \in [0, 1]$. \\
+            and $p_X(X) \in [0, 1]$. \\
             Using the monotonicity of the expected value, we obtain
             \[
-                0 \le \mathbb{E}\paren{\log \paren{\frac{1}{p(X)}}}
-                = -\mathbb{E}\paren{\log \paren{p(X)}} = H(X)
+                0 \le \mathbb{E}\paren{\log \paren{\frac{1}{p_X(X)}}}
+                = -\mathbb{E}\paren{\log \paren{p_X(X)}} = H(X)
             \]
 
         \item 
             We can prove this using Jensens Inequality on a \textit{concave} function: % TODO: Make sure we use the support correctly.
             \begin{align*}
-                -D(p(x) \| q(x)) &= -\mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}}
-                = \mathbb{E}_p\paren{\log \frac{q(X)}{p(X)}}                            && \text{(def. of relative entropy)}            \\
-                &\le \log\paren{\mathbb{E}_p \frac{q(X)}{p(X)}} \\
+                -D(p(x) \| q(x)) &= -\mathbb{E}_{p}\paren{\log \frac{p(X)}{q(X)}}
+                = \mathbb{E}_{p}\paren{\log \frac{q(X)}{p(X)}}                          && \text{(def. of relative entropy)}            \\
+                &\le \log\paren{\mathbb{E}_{p} \frac{q(X)}{p(X)}} \\
                 &= \log\paren{\sum_{x \in \mathcal{X}}{p(x) \frac{q(x)}{p(x)}}}
                 = \log\paren{\sum_{x \in \mathcal{X}}{q(x)}}                            && \text{(def. of exp. value, simplify expr.)}  \\
                 &= \log\paren{1} = 0                                                    && \text{(q is a prob. function)}
             \end{align*}
             So equivalently, we have $D(p(x) \| q(x)) \ge 0$.
-        \item Follows from part 2: $I(X; Y) = D(p(x, y) \| p(x)p(y)) \ge 0$.
+        \item Follows from part 2: $I(X; Y) = D(p_{X,Y} \| p_X p_Y) \ge 0$.
     \end{enumerate}
 \end{proof}
 
@@ -170,7 +170,7 @@
             Let $Y \sim U(\mathcal{X})$ st. $\forall x \in \mathcal{X}\vcentcolon q(x)=\frac{1}{|\mathcal{X}|}$.
             \begin{align*}
                 0 &\le D(p(x) \| q(x))
-                = \mathbb{E}_p\paren{\log \frac{p(X)}{q(X)}}
+                = \mathbb{E}_{p}\paren{\log \frac{p(X)}{q(X)}}
                 = \sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}} \\
                 &= \sum_{x \in \mathcal{X}}{p(x) \log\paren{p(x)|\mathcal{X}|}}
                 = \sum_{x \in \mathcal{X}}{p(x) \log p(x)} + \log |\mathcal{X}| \sum_{x \in \mathcal{X}}{p(x)}\\
@@ -179,26 +179,26 @@
             This is equivalent to $H(X) \le \log |\mathcal{X}|$.
             Lastly, Jensen's Inequality gives us: $H(X) = \log |\mathcal{X}| \iff X \sim U(\mathcal{X})$.
         \item
-            We have $H(Y \mid X) = -\mathbb{E}\paren{\log p(Y \mid X)} = \sum_{(x, y) \injoint}{-p(x, y) \log p(y \mid x)}$. \\
-            Additionally, we have $\forall (x, y) \in \mathcal{X} \times \mathcal{Y}: -p(x, y) \log p(y \mid x) \ge 0$. \\
+            We have $H(Y \mid X) = -\mathbb{E}\paren{\log p_{Y \mid X}(Y \mid X)} = \sum_{(x, y) \injoint}{-p_{X,Y}(x, y) \log p_{Y \mid X}(y \mid x)}$. \\
+            Additionally, we have $\forall (x, y) \in \mathcal{X} \times \mathcal{Y}: -p_{X,Y}(x, y) \log p_{Y \mid X}(y \mid x) \ge 0$. \\
             Combining those facts, we get
             \begin{align*}
                 H(Y \mid X) = 0
-                &\iff \forall (x, y) \injoint: p(x, y) \log p(y \mid x) = 0 \\
-                &\iff \forall (x, y) \injoint: p(x, y) = 0 \oplus p(y \mid x) = 1
+                &\iff \forall (x, y) \injoint: p_{X,Y}(x, y) \log p_{Y \mid X}(y \mid x) = 0 \\
+                &\iff \forall (x, y) \injoint: p_{X,Y}(x, y) = 0 \oplus p_{Y \mid X}(y \mid x) = 1
             \end{align*}
-            This tells us, that either $p(x, y) = 0$ or $p(x, y) = p(y \mid x)p(x) = p(x) = 1$. \\
-            Define $(y_x)_{x \in \mathcal{X}}$ such that $\forall x \in \mathcal{X}: p(x, y_x) > 0$. \\
-            Set $f: \supp(X) \rightarrow \mathcal{Y}, x \mapsto y_x$. This gets us $Im(f) = \{y_x: x \in \mathcal{X}\} = \{y \in \mathcal{Y}: p(x, y) > 0\}$. \\
+            This tells us, that either $p_{X,Y}(x, y) = 0$ or $p_{X,Y}(x, y) = p_{Y \mid X}(y \mid x)p_X(x) = p_X(x) = 1$. \\
+            Define $(y_x)_{x \in \mathcal{X}}$ such that $\forall x \in \mathcal{X}: p_{X,Y}(x, y_x) > 0$. \\
+            Set $f: \supp(X) \rightarrow \mathcal{Y}, x \mapsto y_x$. This gets us $Im(f) = \{y_x: x \in \mathcal{X}\} = \{y \in \mathcal{Y}: p_{X,Y}(x, y) > 0\}$. \\
             So $Y = f(X) \; \text{almost surely}$.
 
         \item
             We have
             \begin{align*}
-                 H(Z \mid X) &= -\mathbb{E}\paren{\log p(Z \mid X)} = \sum_{(x, y) \injoint}{-p(x, y) \log P[Z = x + y \mid X = x]} \\
-                 &= \sum_{(x, y) \injoint}{-p(x, y) \log P[X + Y = x + y \mid X = x]} \\
-                 &= \sum_{(x, y) \injoint}{-p(x, y) \log P[Y = y \mid X = x]}
-                 = -\mathbb{E}\paren{\log p(Y \mid X)} = H(Y \mid X)
+                 H(Z \mid X) &= -\mathbb{E}\paren{\log p_{Z \mid X}(Z \mid X)} = \sum_{(x, y) \injoint}{-p_{X,Y}(x, y) \log \prob[Z = x + y \mid X = x]} \\
+                 &= \sum_{(x, y) \injoint}{-p_{X,Y}(x, y) \log \prob[X + Y = x + y \mid X = x]} \\
+                 &= \sum_{(x, y) \injoint}{-p_{X,Y}(x, y) \log \prob[Y = y \mid X = x]}
+                 = -\mathbb{E}\paren{\log p_{Y \mid X}(Y \mid X)} = H(Y \mid X)
             \end{align*}
             Using the Chain rule, we get $H(X, Y) = H(Y \mid X) + H(X)$
             Using Independence and Information never hurts, we get
