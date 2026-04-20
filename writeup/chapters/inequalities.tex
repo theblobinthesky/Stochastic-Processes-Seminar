@@ -25,7 +25,7 @@
                 f\paren{\sum_{i=1}^{n}{p_i x_i}} &= f\paren{p_1 x_1 + (1 - p_1) \sum_{i=2}^{n}{\frac{p_i}{1 - p_1} x_i}} \\          
                 &\le p_1 f\paren{x_1} + (1 - p_1) f\paren{\sum_{i=2}^{n}{\frac{p_i}{1 - p_1} x_i}}              && \text{(def. of convexity)} \\
                 &\le p_1 f\paren{x_1} + (1 - p_1) \sum_{i=2}^{n}{\frac{p_i}{1 - p_1} f\paren{{x_i}}}         
-                && \text{(induct. hypo. applies bc. of $\sum_{i = 2}^{n}{\frac{p_i}{1 - p_1}}$ = 1)} \\
+                && \text{(induct. hypo. applies since $\sum_{i = 2}^{n}{\frac{p_i}{1 - p_1}}$ = 1)} \\
                 &= \sum_{i=1}^{n}{p_i f\paren{{x_i}}}
             \end{align*}
             Else: If $\mathcal{X}$ is countably infinite, the claim follows using the limit of the previous case.

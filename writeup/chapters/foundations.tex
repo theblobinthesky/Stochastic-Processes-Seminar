@@ -201,9 +201,9 @@
 \begin{theorem}
     There are multiple equivalent ways to express Mutual Information (see Figure \ref{fig:relationships-entropy-mutual-information}):
     \begin{enumerate}
-        \item $I(X; Y) = H(Y) - H(Y | X)$
+        \item $I(X; Y) = H(Y) - H(Y \mid X)$
         \item $I(X; Y) = I(Y; X)$
-        \item $I(Y; X) = H(X) - H(X | Y)$
+        \item $I(Y; X) = H(X) - H(X \mid Y)$
         \item $I(X; Y) = H(X) + H(Y) - H(X, Y)$
         \item $I(X; X) = H(X)$
     \end{enumerate}
@@ -221,8 +221,8 @@
             \end{align*}
         \item The definition of mutual information yields:
             \begin{align*}
-                I(X; Y) &= D(\prob[X = x, Y = y] \| \prob[X = x]\prob[Y = y])       && \text{(by def.~of mutual info.)} \\
-                        &= D(\prob[Y = y, X = x] \| \prob[Y = y]\prob[X = x]) = I(Y; X)
+                I(X; Y) &= D(p_{X,Y} \| p_X p_Y)       && \text{(by def.~of mutual info.)} \\
+                        &= D(p_{Y,X} \| p_Y p_X) = I(Y; X)
             \end{align*}
         \item Follows directly from 1 and 2.
         \item \begin{align*}
@@ -241,7 +241,7 @@
         \textbf{Conditional Relative Entropy:}    & \quad D(p_{Y \mid X} \| q_{Y \mid X}) \\
         &= \mathbb{E}_{p_X} D(p_{Y \mid X}(. \mid X) \| q_{Y \mid X}(. \mid X)) \\
         &= \sum_{x \in \mathcal{X}}{p_X(x) D(p_{Y \mid X}(. \mid x) \| q_{Y \mid X}(. \mid x))} \\
-        &= \mathbb{E}_{p}\paren{\log \frac{p_{Y \mid X}(Y \mid X)}{q_{Y \mid X}(Y \mid X)}} \\
+	    &= \mathbb{E}_{p_{X,Y}}\paren{\log \frac{p_{Y \mid X}(Y \mid X)}{q_{Y \mid X}(Y \mid X)}} \\
         &= \sum_{(x, y) \injoint}{p_{X,Y}(x, y) \log \frac{p_{Y \mid X}(y \mid x)}{q_{Y \mid X}(y \mid x)}} \\
         \textbf{Conditional Mutual Information:}  & \quad I(X; Y \mid Z) 
         = H(X \mid Z) - H(X \mid Y, Z)
@@ -257,33 +257,35 @@
     We define it as $X: \Omega \rightarrow \mathcal{X}, \omega \mapsto \textbf{the corresponding month}$. \\
     Our variable $Y$ answers the question "Is Christmas Advent?": \\
     We define it as $Y: \Omega \rightarrow \mathcal{Y}, \omega \mapsto \mathds{1}_{\{\textbf{NOVEMBER}, \textbf{DECEMBER}\}}(\omega)$. \\
-    We have lived on earth our entire lives. Our model of reality $p$ is correct! \\
+    These models are probability mass functions on $\mathcal{X} \times \mathcal{Y}$,
+    with associated conditional probability mass functions $p_{Y \mid X}$ and $q_{Y \mid X}$. 
+    We have lived on earth our entire lives. Our model of reality $p$ is correct! 
     We define it as
     \[
-        p(Y = 1 \mid x) = \begin{cases}
+        p_{Y \mid X}(1 \mid x) = \begin{cases}
 			1, & \text{if $x \in \{\textbf{NOVEMBER}, \textbf{DECEMBER}\}$} \\
             0, & \text{otherwise}
 		\end{cases}
     \]
     The alien \textit{ET} visits earth. He sees the Christmas trees in January and assumes Advent continues into January.
-    In November and December, he is uncertain too. His model of reality $q$ is not correct! \\
+    In November and December, he is uncertain too. His model of reality $q$ is not correct! 
     We define it as 
     \[
-        q(Y = 1 \mid x) = \begin{cases}
+        q_{Y \mid X}(1 \mid x) = \begin{cases}
 			0.5, & \text{if $x \in \{\textbf{NOVEMBER}, \textbf{DECEMBER}, \textbf{JANUARY}\}$} \\
             0, & \text{otherwise}
 		\end{cases}
     \]
     Let us calculate the individual relative entropies:
     \begin{enumerate}
-        \item $D(p(y \mid \textbf{NOV.}) \| q(y \mid \textbf{NOV.})) = 0 + 1 \log \frac{1}{0.5} = 1$
-        \item $D(p(y \mid \textbf{DEC.}) \| q(y \mid \textbf{DEC.})) = 0 + 1 \log \frac{1}{0.5} = 1$
-        \item $D(p(y \mid \textbf{JAN.}) \| q(y \mid \textbf{JAN.})) = 1 \log \frac{1}{0.5} + 0 = 1$
-        \item Otherwise: $D(p(y \mid x) \| q(y \mid x)) = 0$
+        \item $D(p_{Y \mid X}(\cdot \mid \textbf{NOV.}) \| q_{Y \mid X}(\cdot \mid \textbf{NOV.})) = 0 + 1 \log \frac{1}{0.5} = 1$
+        \item $D(p_{Y \mid X}(\cdot \mid \textbf{DEC.}) \| q_{Y \mid X}(\cdot \mid \textbf{DEC.})) = 0 + 1 \log \frac{1}{0.5} = 1$
+        \item $D(p_{Y \mid X}(\cdot \mid \textbf{JAN.}) \| q_{Y \mid X}(\cdot \mid \textbf{JAN.})) = 1 \log \frac{1}{0.5} + 0 = 1$
+        \item Otherwise: $D(p_{Y \mid X}(\cdot \mid x) \| q_{Y \mid X}(\cdot \mid x)) = 0$
     \end{enumerate}
     We can now calculate the Conditional Relative Entropy:
     \begin{align*}
-        D(p_{Y \mid X} \| q_{Y \mid X}) &= \sum_{x \in \mathcal{X}}{p_X(x) D(p(y \mid x) \| q(y \mid x))} \\
+        D(p_{Y \mid X} \| q_{Y \mid X}) &= \sum_{x \in \mathcal{X}}{p_X(x) D(p_{Y \mid X}(\cdot \mid x) \| q_{Y \mid X}(\cdot \mid x))} \\
         &= \frac{1}{12} \paren{1 + 1 + 1} = \frac{3}{12} = 0.25
     \end{align*}
     So the expression calculates how much of an error \textit{ET} makes per month, on average.
@@ -295,13 +297,13 @@
     Let $n \in \mathbb{N}, n \ge 2$, $(X_1, \cdots, X_n) \sim p(x_1, \cdots, x_n)$ and $Y$ a random variable.
     The following statements about Entropy and Mutual Information are called Chain Rules:
     \begin{enumerate}
-        \item
+        \item \label{item:chain-rules-entropy}
             \[
                 H(X_1, \cdots, X_n) = \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1)}
             \]
         \item
             \[
-                D(p(x) \| q(x)) = D(p(x \mid y) \| q(x \mid y)) + D(p(y) \| q(y))
+                D(p_{X,Y} \| q_{X,Y}) = D(p_X \| q_X) + D(p_{Y \mid X} \| q_{Y \mid X})
             \]
         \item
             \[
@@ -322,24 +324,27 @@
             \end{align*}
             Assume the theorem holds for $n - 1$. Induction case $n - 1$ to $n$:
             \begin{align*}
-                H(X_1, \cdots, H_n) &= H(X_n | X_1, \cdots, H_{n-1}) + H(X_1, \cdots, H_{n-1})          && \text{(apply base case)} \\
-                &= H(X_n | X_1, \cdots, H_{n-1}) + \sum_{i=1}^{n-1}{H(X_i \mid X_{i-1}, \cdots, X_1)}   && \text{(induction hypothesis)}
+                H(X_1, \cdots, X_n) &= H(X_n \mid X_1, \cdots, X_{n-1}) + H(X_1, \cdots, X_{n-1})          && \text{(apply base case)} \\
+                &= H(X_n \mid X_1, \cdots, X_{n-1}) + \sum_{i=1}^{n-1}{H(X_i \mid X_{i-1}, \cdots, X_1)}   && \text{(induction hypothesis)}
             \end{align*}
 
         \item
+            We prove the chain rule for relative entropy using a chain of equalities:
             \begin{align*}
-                D(p(x) \| q(x)) &= \sum_{(x, y) \injoint}{p(x, y) \frac{p(x)}{q(x)}}
-                = \sum_{(x, y) \injoint}{p(x, y) \frac{p(x)}{q(x)}}
-                = \sum_{(x, y) \injoint}{p(x, y) \frac{p(x \mid y)p(y)}{q(x \mid y)p(y)}} \\
-                &= \sum_{(x, y) \injoint}{p(x, y) \frac{p(x \mid y)}{q(x \mid y)}} + \sum_{(x, y) \injoint}{p(x, y) \frac{p(y)}{p(y)}} \\
-                &= D(p(x \mid y) \| q(x \mid y)) + D(p(y) \| q(y))
+                D(p_{X,Y} \| q_{X,Y})
+                    &= \sum_{(x, y) \injoint}{p_{X,Y}(x, y) \log \frac{p_{X,Y}(x, y)}{q_{X,Y}(x, y)}} \\
+                    &= \sum_{(x, y) \injoint}{p_{X,Y}(x, y) \log \frac{p_{Y \mid X}(y \mid x)p_X(x)}{q_{Y \mid X}(y \mid x)q_X(x)}} \\
+                    &= \sum_{(x, y) \injoint}{p_{X,Y}(x, y) \log \frac{p_{Y \mid X}(y \mid x)}{q_{Y \mid X}(y \mid x)}}
+                     + \sum_{(x, y) \injoint}{p_{X,Y}(x, y) \log \frac{p_X(x)}{q_X(x)}} \\
+                    &= D(p_{Y \mid X} \| q_{Y \mid X}) + D(p_X \| q_X)
             \end{align*}
         
         \item
+            We prove the chain rule for mutual information using a chain of equalities:
             \begin{align*}
                 I(X_1, \cdots, X_n; Y) &= H(X_1, \cdots, X_n) - H(X_1, \cdots, X_n \mid Y) \\
-                &= \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1)} + \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1, Y)} \\
-                &= \sum_{i=1}^{n}{I(X_i; Y \mid X_{i-1}, \cdots, X_1)}
+                &= \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1)} - \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1, Y)} && \text{(using item \ref{item:chain-rules-entropy})} \\
+                &= \sum_{i=1}^{n}{I(X_i; Y \mid X_{i-1}, \cdots, X_1)}                                                                  && \text{(using item \ref{item:chain-rules-entropy})}
             \end{align*}
 
     \end{enumerate}
