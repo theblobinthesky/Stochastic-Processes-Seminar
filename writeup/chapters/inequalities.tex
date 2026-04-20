@@ -6,17 +6,17 @@
 \end{remark}
 
 \begin{theorem}[Jensen's Inequality]
-    Let $\mathcal{X} \subset \mathbb{R}$ and $f: \mathcal{X} \rightarrow \mathbb{R}$ a function.
+    Let $\mathcal{X} \subset \mathbb{R}$, $f: \mathcal{X} \rightarrow \mathbb{R}$ a function. Let $\mathbb{E} f(X)$ and $f(\mathbb{E} X)$ be defined.
     \begin{enumerate}
         \item If $f$ is convex, we have $\mathbb{E} f(X) \ge f(\mathbb{E} X)$.
         \item If $f$ is concave, we have $\mathbb{E} f(X) \le f(\mathbb{E} X)$.
-        \item If the $f$ is strictly convex and $\mathbb{E} f(X) = f(\mathbb{E} X)$, we have $\mathbb{E}(X) = X$ almost surely.
+        \item If $f$ is strictly convex and $\mathbb{E} f(X) = f(\mathbb{E} X)$, then $X = \mathbb{E}[X]$ almost surely.
     \end{enumerate}
 \end{theorem}
 \begin{proof}
     \begin{enumerate}
         \item
-            Let $n \in \mathbb{N} \setminus \{1\}$ and $p_1, \cdots, p_n \in (0, 1)$ such that $\sum_{i=1}^{n}{p_i} = 1$ and $x_1, \cdots, x_n \in \mathbb{R}$.
+            Let $n \in \mathbb{N} \setminus \{1\}$ and, without loss of generality, assume that $p_1, \cdots, p_n \in (0, 1)$ satisfy $\sum_{i=1}^{n}{p_i} = 1$ and $x_1, \cdots, x_n \in \mathbb{R}$.
             Distinguish two cases. If $\mathcal{X}$ is finite:
             We show $f\paren{\sum_{i=1}^{n}{p_i x_i}} \le \sum_{i=1}^{n}{p_i f(x_i)}$ by induction. \\
             The definition of convexity yields the base case $i = 2$: $f(p_1 x_1 + p_2 x_2) \le p_1 f(x_1) + p_2 f(x_2)$. \\
@@ -34,8 +34,10 @@
             Follows from part 1 applied to $-f$.
 
         \item
-            If $f$ is strictly convex, the inequality in (1) is strict. 
-            But equality holds, so all prob. mass must be concentrated in one value.
+            If the support of $X$ has more than one element, the inequality in part 1 is strict since $f$ is strictly convex.
+            This contradicts the assumption $\mathbb{E} f(X) = f(\mathbb{E} X)$.
+            Hence $X = c$ almost surely for some constant $c$.
+            By definition of the expectation, this constant must be $c = \mathbb{E}[X]$.
     \end{enumerate}
 \end{proof}
 
@@ -43,7 +45,7 @@
     Entropy and Mutual Information are non-negative:
     \begin{enumerate}
         \item $0 \le H(X)$
-        \item $0 \le D(p(x) \| q(x))$
+        \item $0 \le D(p \| q)$
         \item $0 \le I(X; Y)$
     \end{enumerate}
 \end{corollary}
@@ -60,21 +62,22 @@
 
         \item 
             We can prove this using Jensens Inequality on a \textit{concave} function: % TODO: Make sure we use the support correctly.
+            Let $X \sim p$. 
             \begin{align*}
-                -D(p(x) \| q(x)) &= -\mathbb{E}_{p}\paren{\log \frac{p(X)}{q(X)}}
+                -D(p \| q) &= -\mathbb{E}_{p}\paren{\log \frac{p(X)}{q(X)}}
                 = \mathbb{E}_{p}\paren{\log \frac{q(X)}{p(X)}}                          && \text{(def. of relative entropy)}            \\
-                &\le \log\paren{\mathbb{E}_{p} \frac{q(X)}{p(X)}} \\
-                &= \log\paren{\sum_{x \in \mathcal{X}}{p(x) \frac{q(x)}{p(x)}}}
-                = \log\paren{\sum_{x \in \mathcal{X}}{q(x)}}                            && \text{(def. of exp. value, simplify expr.)}  \\
-                &= \log\paren{1} = 0                                                    && \text{(q is a prob. function)}
+                &\le \log\paren{\mathbb{E}_{p} \frac{q(X)}{p(X)}}                      && \text{(apply Jensen's inequality)} \\
+                &= \log\paren{\sum_{x \in \supp(p)}{p(x) \frac{q(x)}{p(x)}}}
+                = \log\paren{\sum_{x \in \supp(p)}{q(x)}}                              && \text{(def. of exp. value, simplify expr.)}  \\
+                &\le \log\paren{\sum_{x \in \mathcal{X}}{q(x)}} = \log\paren{1} = 0 && \text{(q is a prob. function)}
             \end{align*}
-            So equivalently, we have $D(p(x) \| q(x)) \ge 0$.
+            So $-D(p \| q) \le 0$, hence $D(p \| q) \ge 0$.
         \item Follows from part 2: $I(X; Y) = D(p_{X,Y} \| p_X p_Y) \ge 0$.
     \end{enumerate}
 \end{proof}
 
 
-\subsection{Advanced Properties of Entropy}
+\subsection{Additional Properties of Entropy}
 \begin{figure}[t]
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
@@ -102,33 +105,28 @@
 
         \item What distribution maximises the value of Entropy? \\
             To get a computational intuition for this question, we need to limit our random variables to finite supports.
-            Let $X_p \sim B(p_1, \cdots, p_n)$ be a categorical distribution. \\
+            Let $X_p \sim \mathrm{Categorical}(p_1, \cdots, p_n)$ be a categorical distribution. \\
             We can now write the question as an optimisation problem:
             \[
-                \max_{p \in \mathbb{R}^{n}, \|p\|_1=1, p \le 0}{H(X_p)}
+                \max_{p \in \mathbb{R}^{n}, \|p\|_1=1, p \ge 0}{H(X_p)}
             \]
             The constraints can be automatically achieved by passing the logits through a \textit{Softmax} function.
-            We start from a random initialisation. 
+            We start from a random initialisation.
             Figure \ref{fig:uniform-distr-max-entropy} illustrates the process of solving the problem using Gradient Descent using Tinygrad \cite{Tinygrad}.
             From the data, it seems plausible that the uniform distribution maximises entropy.
             We will prove this statement.
 
-        \item Can joint entropy increase if we add redundant information? \\
-            Let $\Omega = \{1, 2\}$, $\mathds{P}$ uniform, $X, Y: \Omega \rightarrow \mathbb{R}$, $X(\omega) = \omega$ and $Y(\omega) = 2\omega$.
-            $Y$ is redundant to $X$, as $Y = 2X$.
-            We can now calculate the entropy and joint entropy:
-            \begin{align*}
-                H(X) &= \sum_{i = 1}^{2}{-0.5 \log 0.5} = -\log 0.5 = \log 2 = 1 \\
-                H(X, Y) &= \sum_{(i, j) \in \{(1, 2), (2, 4)\}}{-0.25 \log 0.25} = 2 * 0.25 * 2 = 1
-                % TODO: These sums could maybe be expressed more formally first and then substituted in
-            \end{align*}
-            Pairs like $(1, 4)$ have probability zero and do not contribute to the sum in $H(X, Y)$.
-            This example suggest entropy never increases. We will prove that in the follow-up theorem.
+        \item What distribution minimises the value of Entropy? \\
+            Figure \ref{fig:peak-distr-min-entropy} suggests that a peaked distribution minimises entropy.
+            The setup is analogous to the previous optimisation problem and the figure was generated in the same way using Tinygrad.
+            We will prove the statement
+            \[
+                H(X) = 0 \iff \exists x \in \mathcal{X}: p_X(x) = 1.
+            \]
 
         \item What happens to the Entropy if we add independent noise to our measurements? \\
             Let $X \sim U(\{1, 2, 3, 4\})$ be the original signal, $N \sim U(\{0, 1\})$ the noise and let $X, N$ be independent. 
-            Then $S \defeq X + N$ is a noisy signal. We expect the entropy to never decrease. We will prove this later. \\
-            % TODO: Maybe add a calculation. Cannot be bothered right now, it's 2am.
+            Then $S \defeq X + N$ is a noisy signal. We expect the entropy to never decrease. We will prove this later.
 
     \end{enumerate}
 \end{remark}
@@ -140,11 +138,15 @@
             \[
                 H(X \mid Y) \le H(X)
             \]
+        \item A peaked distribution minimises entropy:
+            \[
+                H(X) = 0 \iff \exists x \in \mathcal{X}: p_X(x) = 1
+            \]
         \item The uniform distribution maximizes entropy:
             \[
                 H(X) \le \log |\mathcal{X}| \text{ and } H(X) = \log |\mathcal{X}| \iff X \sim U(\mathcal{X})
             \]
-        \item If information from $Y$ does not add anything to $X$, then $Y$ must be derived from $X$: % TODO: Dis true backwards?
+        \item If $Y$ is determined by $X$, then:
             \[
                 H(Y \mid X) = 0 \implies \exists f\vcentcolon Y = f(X) \; \text{almost surely}
             \]
@@ -155,7 +157,7 @@
             \]
         \item The joint entropy of many variables never exceeds the sum of the individual entropies:
             \[
-                H(X_1, \cdots, H_n) \le \sum_{i=1}^{n}{H(X_i)}
+                H(X_1, \cdots, X_n) \le \sum_{i=1}^{n}{H(X_i)}
             \]
     \end{enumerate}
 \end{theorem}
@@ -167,19 +169,31 @@
             \]
 
         \item
-            Let $Y \sim U(\mathcal{X})$ st. $\forall x \in \mathcal{X}\vcentcolon q(x)=\frac{1}{|\mathcal{X}|}$.
+            We have
+            \[
+                H(X) = \sum_{x \in \mathcal{X}} -p_X(x) \log p_X(x).
+            \]
+            Each summand is non-negative, so $H(X) = 0$ holds if and only if
+            \[
+                \forall x \in \mathcal{X}: -p_X(x) \log p_X(x) = 0.
+            \]
+            For every $x \in \mathcal{X}$ with $p_X(x) > 0$, this implies $\log p_X(x) = 0$, hence $p_X(x) = 1$.
+            Therefore, $H(X) = 0$ if and only if there exists $x \in \mathcal{X}$ with $p_X(x) = 1$.
+
+        \item
+            Let $Y \sim U(\mathcal{X})$ be such that $\forall x \in \mathcal{X}\vcentcolon q(x)=\frac{1}{|\mathcal{X}|}$.
             \begin{align*}
-                0 &\le D(p(x) \| q(x))
-                = \mathbb{E}_{p}\paren{\log \frac{p(X)}{q(X)}}
-                = \sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}} \\
-                &= \sum_{x \in \mathcal{X}}{p(x) \log\paren{p(x)|\mathcal{X}|}}
-                = \sum_{x \in \mathcal{X}}{p(x) \log p(x)} + \log |\mathcal{X}| \sum_{x \in \mathcal{X}}{p(x)}\\
+                0 &\le D(p_X \| q)
+                = \mathbb{E}_{p_X}\paren{\log \frac{p_X(X)}{q(X)}}
+                = \sum_{x \in \mathcal{X}}{p_X(x) \log \frac{p_X(x)}{q(x)}} \\
+                &= \sum_{x \in \mathcal{X}}{p_X(x) \log\paren{p_X(x)|\mathcal{X}|}}
+                = \sum_{x \in \mathcal{X}}{p_X(x) \log p_X(x)} + \log |\mathcal{X}| \sum_{x \in \mathcal{X}}{p_X(x)}\\
                 &= -H(X) + \log |\mathcal{X}| = \log |\mathcal{X}| - H(X)
             \end{align*}
             This is equivalent to $H(X) \le \log |\mathcal{X}|$.
             Lastly, Jensen's Inequality gives us: $H(X) = \log |\mathcal{X}| \iff X \sim U(\mathcal{X})$.
         \item
-            We have $H(Y \mid X) = -\mathbb{E}\paren{\log p_{Y \mid X}(Y \mid X)} = \sum_{(x, y) \injoint}{-p_{X,Y}(x, y) \log p_{Y \mid X}(y \mid x)}$. \\
+            We have $H(Y \mid X) = -\mathbb{E}_{p_{X,Y}}\paren{\log p_{Y \mid X}(Y \mid X)} = \sum_{(x, y) \injoint}{-p_{X,Y}(x, y) \log p_{Y \mid X}(y \mid x)}$. \\
             Additionally, we have $\forall (x, y) \in \mathcal{X} \times \mathcal{Y}: -p_{X,Y}(x, y) \log p_{Y \mid X}(y \mid x) \ge 0$. \\
             Combining those facts, we get
             \begin{align*}
@@ -195,21 +209,20 @@
         \item
             We have
             \begin{align*}
-                 H(Z \mid X) &= -\mathbb{E}\paren{\log p_{Z \mid X}(Z \mid X)} = \sum_{(x, y) \injoint}{-p_{X,Y}(x, y) \log \prob[Z = x + y \mid X = x]} \\
+                 H(Z \mid X) &= -\mathbb{E}_{p_{X,Y}}\paren{\log p_{Z \mid X}(Z \mid X)} = \sum_{(x, y) \injoint}{-p_{X,Y}(x, y) \log \prob[Z = x + y \mid X = x]} \\
                  &= \sum_{(x, y) \injoint}{-p_{X,Y}(x, y) \log \prob[X + Y = x + y \mid X = x]} \\
                  &= \sum_{(x, y) \injoint}{-p_{X,Y}(x, y) \log \prob[Y = y \mid X = x]}
-                 = -\mathbb{E}\paren{\log p_{Y \mid X}(Y \mid X)} = H(Y \mid X)
+                 = -\mathbb{E}_{p_{X,Y}}\paren{\log p_{Y \mid X}(Y \mid X)} = H(Y \mid X)
             \end{align*}
-            Using the Chain rule, we get $H(X, Y) = H(Y \mid X) + H(X)$
             Using Independence and Information never hurts, we get
-            $H(X) = H(X \mid Y) = H(Z \mid Y) \le H(Z)$
-            and
             $H(Y) = H(Y \mid X) = H(Z \mid X) \le H(Z)$.
+            By an analogous argument, we get
+            $H(X) = H(X \mid Y) = H(Z \mid Y) \le H(Z)$.
 
         \item
             Using the Chain rule, we have
             \begin{align*}
-                H(X_1, \cdots, H_n) &= \sum_{i=1}^{n}{H(X_i \mid X_{i-1}, \cdots, X_1)}         && \text{(chain rule)} \\
+                H(X_1, \cdots, X_n) &= \sum_{i=1}^{n}{H(X_i \mid X_1, \cdots, X_{i-1})}         && \text{(chain rule)} \\
                 &\le \sum_{i=1}^{n}{H(X_i)}                                                     && \text{(information never hurts)}
             \end{align*}
 
@@ -228,7 +241,7 @@
     \]
 \end{theorem}
 \begin{proof}
-    TODO
+    The proof of this inequality goes beyond the scope of the paper. Please refer to Elements of Information Theory \cite{Thomas:ElementsOfInformationTheory} for more information.
 \end{proof}
 
 \begin{theorem}[Convexity of Entropy] \label{theorem:convexity-of-entropy}
@@ -283,7 +296,3 @@
             \end{align*}
     \end{enumerate}
 \end{proof}
-
-\begin{remark}[Divergence vs Metric]
-    TODO
-\end{remark}

@@ -29,7 +29,7 @@
     \begin{enumerate}
         \item
             \[
-                \min_{q}{\CrossEntropy(p, q)} = \min_{q}{D(p \| q)}
+                \argmin_{q}{\CrossEntropy(p, q)} = \argmin_{q}{D(p \| q)}
             \]
         \item
             \[
@@ -39,7 +39,7 @@
 \end{theorem}
 \begin{proof}
     \begin{enumerate}
-        \item Cross-Entropy is simply Relative Entropy with a constant offset. So minimizing with respect to $q$ yields the same value.
+        \item Cross-Entropy is simply Relative Entropy with a constant offset. So minimizing with respect to $q$ yields the same minimizers.
         \item
             Let $X \sim p$. Then we have
             \begin{align*}
@@ -68,9 +68,9 @@
     \[
         \Phi = \argmin_{\phi \in \mathbb{R}^n}{\frac{1}{m}\sum_{i=1}^{m}{\CrossEntropy(d_{\omega_i}, f_{\phi}(\omega_i))}}
     \]
-    As we have shown in Theorem \ref{theorem:convexity-of-entropy}, the Relative Entropy and Cross-Entropy are convex functions. \\
+    As we have shown in Theorem \ref{theorem:convexity-of-entropy}, for fixed target distribution $p$, both Relative Entropy and Cross-Entropy are minimized at $q = p$. \\
     For $f_{\phi}$, we can use a two-layer convolutional neural network with dropout, as detailed in the official PyTorch Python example \cite{Pytorch:MNIST}.
-    The solver is Tinygrad \cite{Tinygrad}.
+	The figure \ref{fig:mnist-loss} is computed using the Tinygrad autograd library \cite{Tinygrad}.
     In this case, the map $\phi \mapsto f_{\phi}$ is not convex. So the optimisation objective is not convex either.
     But at least the per-sample loss function $\CrossEntropy(d_{\omega_i}, .)$ is convex.
     We can now use Stochastic Gradient Descent to optimise for $60$ steps with step size 5e-3 and batch size $512$.
