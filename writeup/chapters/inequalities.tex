@@ -28,7 +28,8 @@
                 && \text{(induct. hypo. applies since $\sum_{i = 2}^{n}{\frac{p_i}{1 - p_1}}$ = 1)} \\
                 &= \sum_{i=1}^{n}{p_i f\paren{{x_i}}}
             \end{align*}
-            Else: If $\mathcal{X}$ is countably infinite, the claim follows using the limit of the previous case.
+            Else: If $\mathcal{X}$ is countably infinite, the argument requires an additional approximation step.
+            We omit this here and refer to \textit{Elements of Information Theory} \cite{Thomas:ElementsOfInformationTheory}.
 
         \item
             Follows from part 1 applied to $-f$.
@@ -285,14 +286,8 @@
                 &= -(p \log p + (1-p) \log (1-p))                   && \text{(factor out)} \\
                 &\le -(p + 1 - p) \log \frac{p + 1 - p}{1 + 1} = -\log \frac{1}{2} = 1  && \text{(simplify)}
             \end{align*}
-            Second, for $q$ with $\forall x \in \mathcal{X}: q(x)=\frac{1}{|\mathcal{X}|}$ we have
-            Let $p_1, p_2 \in [0, 1]$ and $\lambda \in (0, 1)$.
-            \begin{align*}
-                h(\lambda p_1 + (1-\lambda) p_2) &= H(X_{\lambda p_1 + (1-\lambda) p_2})                            && \text{(by definition)} \\
-                &= |\mathcal{X}| - D(\lambda p_1 + (1-\lambda) p_2 \| q)                                            && \text{(using theorem \ref{theorem:more-entropy-observations})} \\
-                &\ge |\mathcal{X}| - \lambda D(p_1 \| q) - (1-\lambda) D(p_2 \| q)                                  && \text{(using convexity)} \\
-                &= \lambda \paren{|\mathcal{X}| - D(p_1 \| q)} - (1-\lambda) \paren{|\mathcal{X}| - D(p_2 \| q)}    && \text{(factor out twice)} \\
-                &= \lambda H(X_{p_1}) - (1-\lambda) H(X_{p_2}) = \lambda h(p_1) + (1-\lambda) h(p_2)                && \text{(by definition, simplify)} \\
-            \end{align*}
+            Second, let $p_1, p_2 \in [0, 1]$ and $\lambda \in (0, 1)$.
+	    Using basic differentiation we get $h''(p) < 0$. That proves concavity: 
+	    \[ H(X_{\lambda p_1 + (1-\lambda) p_2}) \ge \lambda H(X_{p_1}) + (1-\lambda) H(X_{p_2}) \]
     \end{enumerate}
 \end{proof}
