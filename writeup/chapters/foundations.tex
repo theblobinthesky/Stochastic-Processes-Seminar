@@ -111,6 +111,20 @@
     This matches the entropy $H(X_{0.5}) = 2$.
 \end{example}
 
+\begin{definition}\label{def:entropy-mutual-info-def}
+    We define the following
+    \begin{align*}
+        \textbf{Conditional Entropy:} & \quad H(X \mid Y) = -\mathbb{E}\paren{\log p_{X \mid Y}(X \mid Y)} \\
+        \textbf{Joint Entropy:}       & \quad H(X, Y) = -\mathbb{E}\paren{\log p_{X,Y}(X, Y)}
+    \intertext{\noindent Let $p$ and $q$ be two probability mass functions on the same set $\mathcal{Z}$. We define the following:}
+        \textbf{Relative Entropy:}    & \quad D(p \| q) = \mathbb{E}_{p}\paren{\log \frac{p(X)}{q(X)}} 
+            \, \text{with conventions from Remark \ref{remark:relative-entropy-conventions}}
+    \intertext{(Sometimes also called KL-Divergence)}
+    \intertext{\noindent Using Relative Entropy, we can define the Mutual Information between the variables $X, Y$:}
+        \textbf{Mutual Information:}  & \quad I(X; Y) = D(p_{X,Y} \| p_X \, p_Y) \\
+    \end{align*}
+\end{definition}
+
 \begin{figure}[t]
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
@@ -127,21 +141,6 @@
         \label{fig:rel-entropy-bionm-distrib}
     \end{subfigure}
 \end{figure}
-
-
-\begin{definition}\label{def:entropy-mutual-info-def}
-    \begin{align*}
-    \intertext{\noindent We define the following:}
-        \textbf{Conditional Entropy:} & \quad H(X \mid Y) = -\mathbb{E}\paren{\log p_{X \mid Y}(X \mid Y)} \\
-        \textbf{Joint Entropy:}       & \quad H(X, Y) = -\mathbb{E}\paren{\log p_{X,Y}(X, Y)}
-    \intertext{\noindent Let $p$ and $q$ be two probability mass functions on the same set $\mathcal{Z}$. We define the following:}
-        \textbf{Relative Entropy:}    & \quad D(p \| q) = \mathbb{E}_{p}\paren{\log \frac{p(X)}{q(X)}} 
-            \, \text{with conventions from Remark \ref{remark:relative-entropy-conventions}}
-    \intertext{(Sometimes also called KL-Divergence)}
-    \intertext{\noindent Using Relative Entropy, we can define the Mutual Information between the variables $X, Y$:}
-        \textbf{Mutual Information:}  & \quad I(X; Y) = D(p_{X,Y} \| p_X \, p_Y) \\
-    \end{align*}
-\end{definition}
 
 \begin{remark} \label{remark:relative-entropy-conventions}
     We have
