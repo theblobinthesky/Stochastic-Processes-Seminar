@@ -132,6 +132,7 @@
     \end{enumerate}
 \end{remark}
 
+\newpage
 \begin{theorem} \label{theorem:more-entropy-observations}
     We can formalise the previous observations including some more:
     \begin{enumerate}
@@ -192,7 +193,9 @@
                 &= -H(X) + \log |\mathcal{X}| = \log |\mathcal{X}| - H(X)
             \end{align*}
             This is equivalent to $H(X) \le \log |\mathcal{X}|$.
-            Lastly, Jensen's Inequality gives us: $H(X) = \log |\mathcal{X}| \iff X \sim U(\mathcal{X})$.
+		    Lastly, the book Elements of Information Theory \cite{Thomas:ElementsOfInformationTheory} outlines the use of Jensen's Inequality to prove that entropy is maximized only by the uniform distribution. 
+            Alternatively, it is more simple to use the theorem about Convexity of Entropy \ref{theorem:convexity-of-entropy} (it comes later and is based on the Log-Sum Inequality), 
+            which confirms that $D(p_X \| q) = 0 \iff p_X = q$.
         \item
             We have $H(Y \mid X) = -\mathbb{E}_{p_{X,Y}}\paren{\log p_{Y \mid X}(Y \mid X)} = \sum_{(x, y) \injoint}{-p_{X,Y}(x, y) \log p_{Y \mid X}(y \mid x)}$. \\
             Additionally, we have $\forall (x, y) \in \mathcal{X} \times \mathcal{Y}: -p_{X,Y}(x, y) \log p_{Y \mid X}(y \mid x) \ge 0$. \\
@@ -240,6 +243,7 @@
         \sum_{i=1}^{n}{a_i \log\frac{a_i}{b_i}} 
         \ge \paren{\sum_{i=1}^{n}{a_i}}\log\frac{\sum_{i=1}^{n}{a_i}}{\sum_{i=1}^{n}{b_i}}
     \]
+    with equality iff. $\exists c > 0, \forall i: a_i = c b_i$
 \end{theorem}
 \begin{proof}
     The proof of this inequality goes beyond the scope of the paper. Please refer to Elements of Information Theory \cite{Thomas:ElementsOfInformationTheory} for more information.
@@ -256,6 +260,9 @@
                 &\le \lambda D(p_1 \| q_1) + (1 - \lambda) D(p_2 \| q_2)
                 \end{aligned}
             \]
+	
+	\item
+	    Zero relative entropy implies equality: $D(p \| q) = 0 \iff p = q$
 
         \item
             Let $X_p \sim B(1, p)$ for all $p \in (0, 1)$ and $h(p) \defeq H(X_p)$. \\
@@ -278,6 +285,18 @@
                 &\le \sum_{x \in \mathcal{X}}{\lambda p_1(x) \log \frac{p_1(x)}{q_1(x)} + (1-\lambda) p_2(x) \log \frac{p_2(x)}{q_2(x)}}        && \text{(log-sum inequality on the 2 two-sums)} \\
                 &= \lambda D(p_1 \| q_1) + (1-\lambda) D(p_2 \| q_2)                                                                            && \text{(by definition)}
             \end{align*}
+	
+        \item
+            Given $p = q$, since $\log 1 = 0$, we have $D(p \| q) = 0$.
+            Given $D(p \| q) = 0$, we have
+            \begin{align*}
+                0 &= D(p \| q) = \sum_{x \in \mathcal{X}}{p(x) \log \frac{p(x)}{q(x)}} \\
+                &\ge \paren{\sum_{x \in \mathcal{X}}{p(x)}} \log \frac{\sum_{x \in \mathcal{X}}{p(x)}}{\sum_{x \in \mathcal{X}}{q(x)}} 
+                = \log \frac{\sum_{x \in \mathcal{X}}{p(x)}}{\sum_{x \in \mathcal{X}}{q(x)}} 
+                = \log 1 = 0
+            \end{align*}
+            So the Log-Sum Inequality is sharp and $p \ge 0, q \ge 0$, which implies $p = c q$ with $c > 0$.
+            Since both $p$ and $q$ are probability mass functions and sum to $1$, $c = 1$ and $p = q$.
 
         \item
             First, we have
