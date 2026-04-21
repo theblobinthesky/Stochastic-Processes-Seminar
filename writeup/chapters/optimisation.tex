@@ -68,6 +68,7 @@
     \[
         \Phi = \argmin_{\phi \in \mathbb{R}^n}{\frac{1}{m}\sum_{i=1}^{m}{\CrossEntropy(d_{\omega_i}, f_{\phi}(\omega_i))}}
     \]
+    Cross Entropy is lacks the division, which makes it faster to compute on modern hardware and more numerically well-conditioned.
     As we have shown in Theorem \ref{theorem:convexity-of-entropy}, for fixed target distribution $p$, both Relative Entropy and Cross-Entropy are minimized at $q = p$. \\
     For $f_{\phi}$, we can use a two-layer convolutional neural network with dropout, as detailed in the official PyTorch Python example \cite{Pytorch:MNIST}.
 	The figure \ref{fig:mnist-loss} is computed using the Tinygrad autograd library \cite{Tinygrad}.
